@@ -1,0 +1,5 @@
+﻿  Generate moc_predefs.h
+  main.cpp
+  widget.cpp
+  moc_widget.cpp
+  ip_sacaner.vcxproj -> C:\Users\wuwen\Desktop\tcp_ip_scan\ip_sacaner\debug\ip_sacaner.exe

@@ -10,6 +10,11 @@ void tray_scan()
 
 }
 
+void auto_edit()
+{
+    qDebug("%d",rand());
+}
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -19,6 +24,8 @@ Widget::Widget(QWidget *parent)
      qDebug("hello world");
 
     connect(ui->stard_scan,&QPushButton::pressed,this,tray_scan);//扫描按钮被按下
+    connect(ui->IP_list,&QTextEdit::textChanged,this,auto_edit);
+    connect(ui->IP_list,&QTextEdit::cursorPositionChanged,this,auto_edit);
 
 }
 
