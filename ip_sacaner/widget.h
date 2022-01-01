@@ -15,6 +15,9 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+    void tray_scan();
+    void auto_edit();
+
 private:
     Ui::Widget *ui;
 };
