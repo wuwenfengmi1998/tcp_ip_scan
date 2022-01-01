@@ -17,6 +17,7 @@ public:
 
     void tray_scan();
     void auto_edit();
+    void tcp_connected();
 
 private:
     Ui::Widget *ui;
