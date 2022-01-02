@@ -46,7 +46,7 @@ public:
         port_list->setGeometry(QRect(500, 100, 91, 111));
         label_3 = new QLabel(Widget);
         label_3->setObjectName(QString::fromUtf8("label_3"));
-        label_3->setGeometry(QRect(510, 30, 61, 61));
+        label_3->setGeometry(QRect(510, 30, 71, 61));
         stard_scan = new QPushButton(Widget);
         stard_scan->setObjectName(QString::fromUtf8("stard_scan"));
         stard_scan->setGeometry(QRect(420, 220, 171, 41));
@@ -84,7 +84,8 @@ public:
     {
         Widget->setWindowTitle(QCoreApplication::translate("Widget", "Widget", nullptr));
         label_3->setText(QCoreApplication::translate("Widget", "\347\253\257\345\217\243\350\214\203\345\233\264\n"
-"80,443\n"
+"80\n"
+"443\n"
 "3000-65535", nullptr));
         stard_scan->setText(QCoreApplication::translate("Widget", "\345\274\200\345\247\213\346\211\253\346\217\217", nullptr));
         label_4->setText(QCoreApplication::translate("Widget", "\347\272\277\347\250\213", nullptr));

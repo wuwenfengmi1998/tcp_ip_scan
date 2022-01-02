@@ -1,30 +1,116 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <QDebug>
-#include <QTcpSocket>  //é€šä¿¡å¥—æŽ¥å­—
+#include <QTcpSocket>  //socket
 
 void Widget::tcp_connected()
 {
-    //qDebug() << "connected";
+    qDebug() << "connected";
 }
+
+
+QString ipv4int_to_str(quint32 ipint)
+{
+    return QString("%1.%2.%3.%4")
+        .arg((ipint >> 24) & 0xff)
+        .arg((ipint >> 16) & 0xff)
+        .arg((ipint >> 8) & 0xff)
+        .arg(ipint & 0xff);
+}
+
+quint32 ipv4str_to_int(const QString &ipstr)
+{
+    QStringList ip4 = ipstr.split(".");
+    if (ip4.size() == 4)
+    {
+        return   ip4.at(3).toInt()
+            | ip4.at(2).toInt() << 8
+            | ip4.at(1).toInt() << 16
+            | ip4.at(0).toInt() << 24;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 
 void Widget::tray_scan()
 {
     qDebug()<< "try_scan";
-    qDebug()<< ui->IP_list->toPlainText();
-
-    //QString text = ui->IP_list->toPlainText();
-    QStringList number_list = ui->IP_list->toPlainText().split("\n");
-    for (int i = 0; i < number_list.size(); ++i)
-    {
-        qDebug() << number_list.at(i);
-    }
-
-    //QTcpSocket* m_socket = new QTcpSocket;
-    //m_socket->connectToHost("127.0.0.1", 58888, QTcpSocket::ReadWrite);
-    //connect(m_socket, &QTcpSocket::connected, this, &Widget::tcp_connected);
+    //qDebug()<< ui->IP_list->toPlainText();
 
     
+    QTcpSocket* m_socket = new QTcpSocket;
+
+    QStringList str_ip_list = ui->IP_list->toPlainText().split("\n");     //ÏÈÒÔÐÐ·Ö¸î
+    QStringList str_ips_list;                                              //ÔÙÒÔ¶Î·Ö¸î
+
+    QStringList str_port_list = ui->port_list->toPlainText().split("\n");
+    QStringList str_ports_list;
+    for (int i = 0; i < str_ip_list.size(); ++i)
+    {
+        //qDebug() << str_ip_list.at(i);
+        str_ips_list = str_ip_list.at(i).split("-");
+        if (str_ips_list.size() > 1)
+        {          
+            //ip¶ÎÄ£Ê½
+            for (quint32 ips = ipv4str_to_int(str_ips_list.at(0)); ips < ipv4str_to_int(str_ips_list.at(str_ips_list.size() - 1)) + 1; ips++)//È¡³öÃ¿Ò»¸öip
+            {
+                //qDebug() << ipv4int_to_str(ips);
+                for (quint16 ii = 0; ii < str_port_list.size(); ii++)//·ÖÀë¶Ë¿Ú
+                {
+                    str_ports_list = str_port_list.at(ii).split("-");
+                    if (str_ports_list.size() > 1)
+                    {
+                        //¶Ë¿Ú¶ÎÄ£Ê½
+                        for (quint16 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
+                        {
+                            qDebug() << ipv4int_to_str(ips) << prots;
+                        }
+                    }
+                    else
+                    {
+                        //µ¥¶Ë¿ÚÄ£Ê½
+                        qDebug() << ipv4int_to_str(ips) << str_ports_list.at(0).toInt();
+                    }
+                }
+            }
+        }
+        else
+        {
+            //µ¥ip»òÓòÃûÄ£Ê½
+            for (quint16 ii = 0; ii < str_port_list.size(); ii++)//·ÖÀë¶Ë¿Ú
+            {
+                str_ports_list = str_port_list.at(ii).split("-");
+                if (str_ports_list.size() > 1)
+                {
+                    //¶Ë¿Ú¶ÎÄ£Ê½
+                    for (quint16 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
+                    {
+                        qDebug() <<str_ips_list.at(0) << prots;
+                    }
+                }
+                else
+                {
+                    //µ¥¶Ë¿ÚÄ£Ê½
+                    qDebug() << str_ips_list.at(0) << str_ports_list.at(0).toInt();
+                }
+            }
+            //m_socket->connectToHost(str_ips_list.at(0), str_port_list.at(0).toInt(), QTcpSocket::ReadWrite);
+            //connect(m_socket, &QTcpSocket::connected, this, &Widget::tcp_connected);
+        }
+
+
+        
+        //for (unsigned long a = str_ips_list.at(0).toInt();a< str_ip_list.size()>1? str_ips_list.at(1).toInt()+1: str_ips_list.at(0).toInt()+1;a++)
+        //{
+        //    qDebug() << a;
+        //}
+
+    }
+
+   
     
 }
 
@@ -43,7 +129,7 @@ Widget::Widget(QWidget *parent)
 
      //qDebug("hello world");
 
-    connect(ui->stard_scan,&QPushButton::pressed,this, &Widget::tray_scan);//æ‰«ææŒ‰é’®è¢«æŒ‰ä¸‹
+    connect(ui->stard_scan,&QPushButton::pressed,this, &Widget::tray_scan);//'scan button pass'
     connect(ui->IP_list,&QTextEdit::textChanged,this, &Widget::auto_edit);
 
   

@@ -40,13 +40,14 @@
     <rect>
      <x>510</x>
      <y>30</y>
-     <width>61</width>
+     <width>71</width>
      <height>61</height>
     </rect>
    </property>
    <property name="text">
     <string>端口范围
-80,443
+80
+443
 3000-65535</string>
    </property>
   </widget>
