@@ -12,7 +12,6 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QListView>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QTextEdit>
@@ -28,11 +27,11 @@ public:
     QPushButton *stard_scan;
     QSpinBox *spinBox;
     QLabel *label_4;
-    QListView *listView;
     QLabel *label_5;
     QPushButton *pushButton;
     QTextEdit *IP_list;
     QLabel *label;
+    QTextEdit *outputlist;
 
     void setupUi(QWidget *Widget)
     {
@@ -59,9 +58,6 @@ public:
         label_4 = new QLabel(Widget);
         label_4->setObjectName(QString::fromUtf8("label_4"));
         label_4->setGeometry(QRect(240, 230, 53, 16));
-        listView = new QListView(Widget);
-        listView->setObjectName(QString::fromUtf8("listView"));
-        listView->setGeometry(QRect(10, 270, 581, 201));
         label_5 = new QLabel(Widget);
         label_5->setObjectName(QString::fromUtf8("label_5"));
         label_5->setGeometry(QRect(10, 230, 53, 16));
@@ -74,6 +70,10 @@ public:
         label = new QLabel(Widget);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(10, 20, 141, 71));
+        outputlist = new QTextEdit(Widget);
+        outputlist->setObjectName(QString::fromUtf8("outputlist"));
+        outputlist->setGeometry(QRect(10, 270, 581, 221));
+        outputlist->setReadOnly(true);
 
         retranslateUi(Widget);
 

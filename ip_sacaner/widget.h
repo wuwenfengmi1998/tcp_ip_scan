@@ -18,6 +18,7 @@ public:
     void tray_scan();
     void auto_edit();
     void tcp_connected();
+    void ip_scan(const QString& ipstr, quint32 ipint);
 
 private:
     Ui::Widget *ui;

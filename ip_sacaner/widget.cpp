@@ -35,9 +35,33 @@ quint32 ipv4str_to_int(const QString &ipstr)
 }
 
 
+void Widget::ip_scan(const QString& ipstr, quint32 ipint)
+{
+    
+    if (ipint != 0 && ipstr!="")
+    {
+        //qDebug() << ipstr << ":" << ipint;
+        QTcpSocket* m_socket=new QTcpSocket(this);
+        m_socket->connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
+        connect(m_socket, &QTcpSocket::connected, [=] 
+            {
+                QString ip = ipstr;// m_socket->peerAddress().toString();
+                quint16 port = ipint;// m_socket->peerPort();
+
+                qDebug() << ip << ":" << port;
+                QString temp = QString("%1:%2").arg(ip).arg(port);
+                ui->outputlist->append(temp);
+                m_socket->disconnectFromHost();
+                m_socket->disconnect();
+                //delete m_socket;
+
+            });
+
+    }
+}
+
 void Widget::tray_scan()
 {
-    qDebug()<< "try_scan";
     //qDebug()<< ui->IP_list->toPlainText();
 
     
@@ -66,13 +90,13 @@ void Widget::tray_scan()
                         //端口段模式
                         for (quint16 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
                         {
-                            qDebug() << ipv4int_to_str(ips) << prots;
+                            Widget::ip_scan(ipv4int_to_str(ips), prots);
                         }
                     }
                     else
                     {
                         //单端口模式
-                        qDebug() << ipv4int_to_str(ips) << str_ports_list.at(0).toInt();
+                        Widget::ip_scan(ipv4int_to_str(ips), str_ports_list.at(0).toInt());
                     }
                 }
             }
@@ -88,17 +112,17 @@ void Widget::tray_scan()
                     //端口段模式
                     for (quint16 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
                     {
-                        qDebug() <<str_ips_list.at(0) << prots;
+                        Widget::ip_scan(str_ips_list.at(0), prots);
                     }
                 }
                 else
                 {
                     //单端口模式
-                    qDebug() << str_ips_list.at(0) << str_ports_list.at(0).toInt();
+                    Widget::ip_scan(str_ips_list.at(0), str_ports_list.at(0).toInt());
+
                 }
             }
-            //m_socket->connectToHost(str_ips_list.at(0), str_port_list.at(0).toInt(), QTcpSocket::ReadWrite);
-            //connect(m_socket, &QTcpSocket::connected, this, &Widget::tcp_connected);
+           
         }
 
 

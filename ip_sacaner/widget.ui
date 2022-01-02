@@ -96,16 +96,6 @@
     <string>线程</string>
    </property>
   </widget>
-  <widget class="QListView" name="listView">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>270</y>
-     <width>581</width>
-     <height>201</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
@@ -156,6 +146,19 @@
 127.0.0.1
 0.0.0.0-255.255.255.255
 domain.com</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="outputlist">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>581</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
