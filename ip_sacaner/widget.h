@@ -16,9 +16,12 @@ public:
     ~Widget();
 
     void tray_scan();
+    void ip_scan(const QString& ipstr, quint32 ipint);
     void auto_edit();
     void tcp_connected();
-    void ip_scan(const QString& ipstr, quint32 ipint);
+
+    void test();
+
 
 private:
     Ui::Widget *ui;

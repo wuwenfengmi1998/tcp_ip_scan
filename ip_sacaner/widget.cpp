@@ -2,6 +2,8 @@
 #include "ui_widget.h"
 #include <QDebug>
 #include <QTcpSocket>  //socket
+#include "scan_run.h"
+
 
 void Widget::tcp_connected()
 {
@@ -143,7 +145,11 @@ void Widget::auto_edit()
     //qDebug("%d",rand());
 }
 
-
+void Widget::test()
+{
+    qDebug() << "Test";
+    Widget::tray_scan();
+}
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -152,8 +158,9 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
      //qDebug("hello world");
+    scan_run *scan_thread=new scan_run;
 
-    connect(ui->stard_scan,&QPushButton::pressed,this, &Widget::tray_scan);//'scan button pass'
+    connect(ui->stard_scan, &QPushButton::pressed, [=]() {scan_thread->start(); });//'scan button pass'
     connect(ui->IP_list,&QTextEdit::textChanged,this, &Widget::auto_edit);
 
   
