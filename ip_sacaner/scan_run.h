@@ -18,6 +18,7 @@ public:
 
     void tray_scan();
     void ip_scan(const QString& ipstr, quint32 ipint);
+    void connected();
 
 protected:
     void run();

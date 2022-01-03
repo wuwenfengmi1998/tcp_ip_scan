@@ -26,6 +26,10 @@ quint32 ipv4str_to_int(const QString& ipstr)
     }
 }
 
+void scan_run::connected()
+{
+
+}
 
 void scan_run::ip_scan(const QString& ipstr, quint32 ipint)
 {
@@ -35,7 +39,7 @@ void scan_run::ip_scan(const QString& ipstr, quint32 ipint)
     if (ipint != 0 && ipstr != "")
     {
         //qDebug() << ipstr << ":" << ipint;
-        QTcpSocket* m_socket = new QTcpSocket;
+        QTcpSocket* m_socket = new QTcpSocket(this);
         m_socket->connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
         connect(m_socket, &QTcpSocket::connected, [=]
             {
