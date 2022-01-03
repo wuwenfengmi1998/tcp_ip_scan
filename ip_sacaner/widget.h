@@ -22,6 +22,8 @@ public:
 
     void test();
 
+    static Widget* pthis;
+
 
 private:
     Ui::Widget *ui;

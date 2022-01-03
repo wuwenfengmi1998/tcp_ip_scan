@@ -148,7 +148,7 @@ void Widget::auto_edit()
 void Widget::test()
 {
     qDebug() << "Test";
-    Widget::tray_scan();
+    //Widget::tray_scan();
 }
 
 Widget::Widget(QWidget *parent)
@@ -158,6 +158,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
      //qDebug("hello world");
+    
     scan_run *scan_thread=new scan_run;
 
     connect(ui->stard_scan, &QPushButton::pressed, [=]() {scan_thread->start(); });//'scan button pass'
