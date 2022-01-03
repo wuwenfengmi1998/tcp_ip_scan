@@ -2,6 +2,12 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QDebug>
+#include <QTextEdit>
+
+
+#include "scan_run.h"
+#include <QThread>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -15,17 +21,16 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
-    void tray_scan();
-    void ip_scan(const QString& ipstr, quint32 ipint);
+
     void auto_edit();
-    void tcp_connected();
 
-    void test();
-
-    static Widget* pthis;
-
-
+    
+    Ui::Widget* ui;
 private:
-    Ui::Widget *ui;
+   
 };
+
+
+
+
 #endif // WIDGET_H
