@@ -28,12 +28,24 @@ quint32 ipv4str_to_int(const QString& ipstr)
 
 void trytry::run()
 {
-    
+    qDebug() << ipstr<<":"<< ipint;
+    *now_thread_num++;
+    QTcpSocket m_socket;
+    m_socket.connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
+    if (m_socket.waitForConnected(timeout))
+    {
+        QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
+        output_list->append(temp);    
+    }
+    m_socket.disconnectFromHost();
+    m_socket.disconnect();
+    *now_thread_num--;
+   
 }
 
 dispatch::dispatch()
 {
-    
+
 
 }
 
@@ -42,15 +54,17 @@ void dispatch::tray(const QString& ipstr, quint32 ipint)
 
     if (ipint != 0 && ipstr != "")
     {
-        qDebug() << ipstr << ":" << ipint;
-        
-        //trytry try_telnet;
-        //try_telnet.ipstr = ipstr;
-        //try_telnet.ipint = ipint;
-        //try_telnet.timeout = timeout;
-        //try_telnet.output_list = output_list;
-        //try_telnet.moveToThread(main_thread);
-        //try_telnet.run();
+       
+        while (now_thread_num> set_thread_num);
+
+        try_telnet=new trytry;
+        try_telnet->ipstr = ipstr;
+        try_telnet->ipint = ipint;
+        try_telnet->timeout = timeout;
+        try_telnet->output_list = output_list;
+        try_telnet->now_thread_num = &now_thread_num;
+        try_telnet->moveToThread(main_thread);
+        try_telnet->start();
 
 
     }

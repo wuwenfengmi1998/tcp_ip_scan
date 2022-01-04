@@ -17,6 +17,7 @@ public:
     quint16 timeout;
     QString ipstr;
     quint32 ipint;
+    quint16 *now_thread_num;
     QTextEdit* output_list;
     void run();
 
@@ -39,6 +40,8 @@ public:
     QTextEdit* ip_list;
     QTextEdit* port_list;
     QTextEdit* output_list;
+
+    trytry* try_telnet;
 
     void tray(const QString& ipstr, quint32 ipint);
     void run();
