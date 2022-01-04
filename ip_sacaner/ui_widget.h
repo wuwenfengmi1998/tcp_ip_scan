@@ -25,13 +25,15 @@ public:
     QTextEdit *port_list;
     QLabel *label_3;
     QPushButton *stard_scan;
-    QSpinBox *spinBox;
+    QSpinBox *threads;
     QLabel *label_4;
     QLabel *label_5;
     QPushButton *pushButton;
     QTextEdit *IP_list;
     QLabel *label;
     QTextEdit *outputlist;
+    QLabel *label_2;
+    QSpinBox *timeout;
 
     void setupUi(QWidget *Widget)
     {
@@ -49,15 +51,15 @@ public:
         stard_scan = new QPushButton(Widget);
         stard_scan->setObjectName(QString::fromUtf8("stard_scan"));
         stard_scan->setGeometry(QRect(420, 220, 171, 41));
-        spinBox = new QSpinBox(Widget);
-        spinBox->setObjectName(QString::fromUtf8("spinBox"));
-        spinBox->setGeometry(QRect(300, 230, 111, 22));
-        spinBox->setMinimum(1);
-        spinBox->setMaximum(999);
-        spinBox->setValue(1);
+        threads = new QSpinBox(Widget);
+        threads->setObjectName(QString::fromUtf8("threads"));
+        threads->setGeometry(QRect(350, 230, 61, 22));
+        threads->setMinimum(1);
+        threads->setMaximum(999);
+        threads->setValue(10);
         label_4 = new QLabel(Widget);
         label_4->setObjectName(QString::fromUtf8("label_4"));
-        label_4->setGeometry(QRect(240, 230, 53, 16));
+        label_4->setGeometry(QRect(320, 230, 31, 16));
         label_5 = new QLabel(Widget);
         label_5->setObjectName(QString::fromUtf8("label_5"));
         label_5->setGeometry(QRect(10, 230, 53, 16));
@@ -74,6 +76,15 @@ public:
         outputlist->setObjectName(QString::fromUtf8("outputlist"));
         outputlist->setGeometry(QRect(10, 270, 581, 221));
         outputlist->setReadOnly(true);
+        label_2 = new QLabel(Widget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setGeometry(QRect(200, 230, 41, 16));
+        timeout = new QSpinBox(Widget);
+        timeout->setObjectName(QString::fromUtf8("timeout"));
+        timeout->setGeometry(QRect(250, 230, 61, 22));
+        timeout->setMinimum(1);
+        timeout->setMaximum(1000);
+        timeout->setValue(100);
 
         retranslateUi(Widget);
 
@@ -95,6 +106,7 @@ public:
 "127.0.0.1\n"
 "0.0.0.0-255.255.255.255\n"
 "domain.com", nullptr));
+        label_2->setText(QCoreApplication::translate("Widget", "\350\266\205\346\227\266ms", nullptr));
     } // retranslateUi
 
 };

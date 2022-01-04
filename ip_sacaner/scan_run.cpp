@@ -26,39 +26,31 @@ quint32 ipv4str_to_int(const QString& ipstr)
     }
 }
 
-void scan_run::connected()
+void trytry::run()
 {
-
+    qDebug() << ipstr << ":" << ipint;
 }
 
-void scan_run::ip_scan(const QString& ipstr, quint32 ipint)
-{
 
-    qDebug() << ipstr << ":" << ipint;
+void dispatch::tray(const QString& ipstr, quint32 ipint)
+{
 
     if (ipint != 0 && ipstr != "")
     {
-        //qDebug() << ipstr << ":" << ipint;
-        QTcpSocket* m_socket = new QTcpSocket(this);
-        m_socket->connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
-        connect(m_socket, &QTcpSocket::connected, [=]
-            {
-                QString ip = ipstr;// m_socket->peerAddress().toString();
-                quint16 port = ipint;// m_socket->peerPort();
+        
+        trytry try_telnet;
+        try_telnet.ipstr = ipstr;
+        try_telnet.ipint = ipint;
+        try_telnet.timeout = timeout;
+        try_telnet.output_list = output_list;
+        try_telnet.moveToThread(main_thread);
+        try_telnet.run();
 
-                qDebug() << ip << ":" << port;
-                QString temp = QString("%1:%2").arg(ip).arg(port);
-                output_list->append(temp);
-                m_socket->disconnectFromHost();
-                m_socket->disconnect();
-                //delete m_socket;
-
-            });
 
     }
 }
 
-void scan_run::tray_scan()
+void dispatch::run()
 {
     //qDebug()<< ui->IP_list->toPlainText();
 
@@ -80,21 +72,21 @@ void scan_run::tray_scan()
             for (quint32 ips = ipv4str_to_int(str_ips_list.at(0)); ips < ipv4str_to_int(str_ips_list.at(str_ips_list.size() - 1)) + 1; ips++)//取出每一个ip
             {
                 //qDebug() << ipv4int_to_str(ips);
-                for (quint16 ii = 0; ii < str_port_list.size(); ii++)//分离端口
+                for (quint32 ii = 0; ii < str_port_list.size(); ii++)//分离端口
                 {
                     str_ports_list = str_port_list.at(ii).split("-");
                     if (str_ports_list.size() > 1)
                     {
                         //端口段模式
-                        for (quint16 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
+                        for (quint32 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
                         {
-                            scan_run::ip_scan(ipv4int_to_str(ips), prots);
+                            dispatch::tray(ipv4int_to_str(ips), prots);
                         }
                     }
                     else
                     {
                         //单端口模式
-                        scan_run::ip_scan(ipv4int_to_str(ips), str_ports_list.at(0).toInt());
+                        dispatch::tray(ipv4int_to_str(ips), str_ports_list.at(0).toInt());
                     }
                 }
             }
@@ -102,21 +94,21 @@ void scan_run::tray_scan()
         else
         {
             //单ip或域名模式
-            for (quint16 ii = 0; ii < str_port_list.size(); ii++)//分离端口
+            for (quint32 ii = 0; ii < str_port_list.size(); ii++)//分离端口
             {
                 str_ports_list = str_port_list.at(ii).split("-");
                 if (str_ports_list.size() > 1)
                 {
                     //端口段模式
-                    for (quint16 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
+                    for (quint32 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
                     {
-                        scan_run::ip_scan(str_ips_list.at(0), prots);
+                        dispatch::tray(str_ips_list.at(0), prots);
                     }
                 }
                 else
                 {
                     //单端口模式
-                    scan_run::ip_scan(str_ips_list.at(0), str_ports_list.at(0).toInt());
+                    dispatch::tray(str_ips_list.at(0), str_ports_list.at(0).toInt());
 
                 }
             }
@@ -132,17 +124,10 @@ void scan_run::tray_scan()
 
     }
 
-
-
+    //sleep(1);//稍微等一下其他线程完成
+    emit dispatch_finish();
 }
 
-
-void scan_run::run()
-{
-    scan_run::tray_scan();
-	
-}
-	
 
 
 

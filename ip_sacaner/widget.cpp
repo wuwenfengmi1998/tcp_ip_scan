@@ -22,22 +22,28 @@ Widget::Widget(QWidget *parent)
 
      //qDebug("hello world");
     
-    QThread* pt;
-    pt = new QThread(this);
 
-    scan_run *mt;
-    mt = new scan_run;
-    mt->ip_list = ui->IP_list;
-    mt->port_list = ui->port_list;
-    mt->output_list = ui->outputlist;
 
-    mt->moveToThread(pt);
-   
+    main_thread = new QThread(this);
 
     connect(ui->stard_scan, &QPushButton::pressed, [=]() 
         {
-            //tray_scan();
-            mt->start();
+            dispatch* dispatch_thread;
+            dispatch_thread = new dispatch;
+            dispatch_thread->ip_list = ui->IP_list;
+            dispatch_thread->port_list = ui->port_list;
+            dispatch_thread->output_list = ui->outputlist;
+            dispatch_thread->set_thread_num = ui->threads->value();
+            dispatch_thread->now_thread_num = 0;
+            dispatch_thread->timeout = ui->timeout->value();
+            dispatch_thread->main_thread = main_thread;
+            dispatch_thread->moveToThread(main_thread);
+            dispatch_thread->start();
+            connect(dispatch_thread, &dispatch::dispatch_finish, [=]()
+                {
+                    qDebug() << "dispatch_finish";
+                    //delete dispatch_thread;
+                });
         });//'scan button pass'
     connect(ui->IP_list,&QTextEdit::textChanged,this, &Widget::auto_edit);
 
@@ -46,6 +52,7 @@ Widget::Widget(QWidget *parent)
 
 Widget::~Widget()
 {
+    delete main_thread;
     delete ui;
 }
 

@@ -8,20 +8,41 @@
 #include <QDebug>
 #include <QTcpSocket>  //socket
 
-class scan_run : public QThread
+
+class trytry : public QThread
 {
 public:
 
+
+    quint16 timeout;
+    QString ipstr;
+    quint32 ipint;
+    QTextEdit* output_list;
+    void run();
+
+
+};
+
+class dispatch : public QThread
+{
+    Q_OBJECT
+public:
+
+    quint16 set_thread_num;
+    quint16 now_thread_num;
+    quint16 timeout;
+
+
+    QThread* main_thread;
     QTextEdit* ip_list;
     QTextEdit* port_list;
     QTextEdit* output_list;
 
-    void tray_scan();
-    void ip_scan(const QString& ipstr, quint32 ipint);
-    void connected();
-
-protected:
+    void tray(const QString& ipstr, quint32 ipint);
     void run();
+
+signals:
+    void dispatch_finish();
 };
 
 

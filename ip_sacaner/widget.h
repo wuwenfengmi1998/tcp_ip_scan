@@ -24,6 +24,8 @@ public:
 
     void auto_edit();
 
+    QThread* main_thread;
+    
     
     Ui::Widget* ui;
 private:

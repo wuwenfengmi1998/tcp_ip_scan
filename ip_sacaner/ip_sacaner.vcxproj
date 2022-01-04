@@ -221,7 +221,7 @@
     </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scan_run.h" />
+    <QtMoc Include="scan_run.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
