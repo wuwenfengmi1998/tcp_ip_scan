@@ -28,6 +28,8 @@ class dispatch : public QThread
     Q_OBJECT
 public:
 
+    dispatch();
+
     quint16 set_thread_num;
     quint16 now_thread_num;
     quint16 timeout;

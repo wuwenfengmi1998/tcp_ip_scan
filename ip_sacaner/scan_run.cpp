@@ -28,23 +28,29 @@ quint32 ipv4str_to_int(const QString& ipstr)
 
 void trytry::run()
 {
-    qDebug() << ipstr << ":" << ipint;
+    
 }
 
+dispatch::dispatch()
+{
+    
+
+}
 
 void dispatch::tray(const QString& ipstr, quint32 ipint)
 {
 
     if (ipint != 0 && ipstr != "")
     {
+        qDebug() << ipstr << ":" << ipint;
         
-        trytry try_telnet;
-        try_telnet.ipstr = ipstr;
-        try_telnet.ipint = ipint;
-        try_telnet.timeout = timeout;
-        try_telnet.output_list = output_list;
-        try_telnet.moveToThread(main_thread);
-        try_telnet.run();
+        //trytry try_telnet;
+        //try_telnet.ipstr = ipstr;
+        //try_telnet.ipint = ipint;
+        //try_telnet.timeout = timeout;
+        //try_telnet.output_list = output_list;
+        //try_telnet.moveToThread(main_thread);
+        //try_telnet.run();
 
 
     }

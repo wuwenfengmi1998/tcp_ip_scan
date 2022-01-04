@@ -25,7 +25,7 @@ Widget::Widget(QWidget *parent)
 
 
     main_thread = new QThread(this);
-
+    main_thread->start();
     connect(ui->stard_scan, &QPushButton::pressed, [=]() 
         {
             dispatch* dispatch_thread;
@@ -52,7 +52,8 @@ Widget::Widget(QWidget *parent)
 
 Widget::~Widget()
 {
-    delete main_thread;
+    main_thread->exit();
+    //delete main_thread;
     delete ui;
 }
 
