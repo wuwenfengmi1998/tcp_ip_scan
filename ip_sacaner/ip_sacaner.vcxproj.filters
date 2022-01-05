@@ -51,6 +51,9 @@
     <QtMoc Include="widget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="scan_run.h">
+      <Filter>Generated Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
@@ -64,10 +67,5 @@
     <QtUic Include="widget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="scan_run.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -96,13 +96,13 @@ void dispatch::run()
 
     //QTcpSocket* m_socket = new QTcpSocket;
 
-    QStringList str_ip_list = ip_list->toPlainText().split("\n");     //先以行分割
-    QStringList str_ips_list;                                              //再以段分割
+    QStringList str_ip_list = ip_list->toPlainText().split("\n");
+    QStringList str_ips_list;
 
     QStringList str_port_list = port_list->toPlainText().split("\n");
     QStringList str_ports_list;
 
-    //扫描之前先计算一共需要扫描的ip数量
+
 
     quint32 ips_num=0;
     quint32 ports_num=0;
@@ -112,28 +112,28 @@ void dispatch::run()
         str_ips_list = str_ip_list.at(i).split("-");
         if (str_ips_list.size() > 1)
         {
-        //ip段模式
+
             ips_num=ipv4str_to_int(str_ips_list.at(str_ips_list.size() - 1))-ipv4str_to_int(str_ips_list.at(0))+1;
         }else
         {
-            //单ip或域名模式
+
             ips_num+=1;
 
         }
      }
 
 
-    for (quint32 ii = 0; ii < str_port_list.size(); ii++)//分离端口
+    for (quint32 ii = 0; ii < str_port_list.size(); ii++)
     {
         str_ports_list = str_port_list.at(ii).split("-");
         if (str_ports_list.size() > 1)
         {
-            //端口段模式
+
             ports_num=str_ports_list.at(str_ports_list.size() - 1).toInt() -str_ports_list.at(0).toInt()+1;
         }
         else
         {
-            //单端口模式
+
             ports_num+=1;
         }
     }
@@ -151,16 +151,16 @@ void dispatch::run()
         str_ips_list = str_ip_list.at(i).split("-");
         if (str_ips_list.size() > 1)
         {
-            //ip段模式
-            for (quint32 ips = ipv4str_to_int(str_ips_list.at(0)); ips < ipv4str_to_int(str_ips_list.at(str_ips_list.size() - 1)) + 1; ips++)//取出每一个ip
+
+            for (quint32 ips = ipv4str_to_int(str_ips_list.at(0)); ips < ipv4str_to_int(str_ips_list.at(str_ips_list.size() - 1)) + 1; ips++)
             {
                 //qDebug() << ipv4int_to_str(ips);
-                for (quint32 ii = 0; ii < str_port_list.size(); ii++)//分离端口
+                for (quint32 ii = 0; ii < str_port_list.size(); ii++)
                 {
                     str_ports_list = str_port_list.at(ii).split("-");
                     if (str_ports_list.size() > 1)
                     {
-                        //端口段模式
+
                         for (quint32 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
                         {
                             dispatch::tray(ipv4int_to_str(ips), prots);
@@ -168,7 +168,7 @@ void dispatch::run()
                     }
                     else
                     {
-                        //单端口模式
+
                         dispatch::tray(ipv4int_to_str(ips), str_ports_list.at(0).toInt());
                     }
                 }
@@ -176,13 +176,13 @@ void dispatch::run()
         }
         else
         {
-            //单ip或域名模式
-            for (quint32 ii = 0; ii < str_port_list.size(); ii++)//分离端口
+
+            for (quint32 ii = 0; ii < str_port_list.size(); ii++)
             {
                 str_ports_list = str_port_list.at(ii).split("-");
                 if (str_ports_list.size() > 1)
                 {
-                    //端口段模式
+
                     for (quint32 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
                     {
                         dispatch::tray(str_ips_list.at(0), prots);
@@ -190,7 +190,7 @@ void dispatch::run()
                 }
                 else
                 {
-                    //单端口模式
+
                     dispatch::tray(str_ips_list.at(0), str_ports_list.at(0).toInt());
 
                 }
@@ -207,7 +207,7 @@ void dispatch::run()
 
     }
 
-    sleep(1);//稍微等一下其他线程完成
+    sleep(1);
     emit dispatch_finish();
 }
 
