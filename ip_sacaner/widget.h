@@ -24,10 +24,13 @@ public:
 
     void auto_edit();
 
-    QThread* main_thread;
+    //QThread* main_thread;
     
+    qint16 scan_flag=0;
+
     quint64 *t_bar;
     quint64 *nt_bar;
+
 
 private:
    Ui::Widget* ui;

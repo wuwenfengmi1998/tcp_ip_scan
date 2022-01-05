@@ -15,6 +15,7 @@ class trytry : public QThread
 {
 public:
 
+    quint16 *outputbusy;
 
     quint16 timeout;
     QString ipstr;
@@ -42,8 +43,8 @@ public:
     quint16 timeout;
     quint64 t_bar=0;
     quint64 nt_bar=0;
-
-    QThread* main_thread;
+    quint16 outputbusy=0;
+    //QThread* main_thread;
     QTextEdit* ip_list;
     QTextEdit* port_list;
     QTextEdit* output_list;

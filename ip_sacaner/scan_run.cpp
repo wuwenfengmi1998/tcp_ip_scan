@@ -35,8 +35,11 @@ void trytry::run()
     m_socket.connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
     if (m_socket.waitForConnected(timeout))
     {
+        while(*outputbusy);
+        *outputbusy=1;
         QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
-        output_list->append(temp);    
+        output_list->append(temp);
+        *outputbusy=0;
     }
     m_socket.disconnectFromHost();
     m_socket.disconnect();
@@ -61,7 +64,7 @@ void dispatch::tray(const QString& ipstr, quint32 ipint)
 
     if (ipint != 0 && ipstr != "")
     {
-       
+       //qDebug()<<"thread "<<now_thread_num<<":"<<set_thread_num;
         while (now_thread_num> set_thread_num);
 
         try_telnet=new trytry;
@@ -74,9 +77,11 @@ void dispatch::tray(const QString& ipstr, quint32 ipint)
         try_telnet->t_bar=&t_bar;
         try_telnet->nt_bar=&nt_bar;
 
+        try_telnet->outputbusy=&outputbusy;
+
         try_telnet->the_bar=the_bar;
 
-        try_telnet->moveToThread(main_thread);
+        //try_telnet->moveToThread(main_thread);
         try_telnet->start();
 
 
@@ -89,7 +94,7 @@ void dispatch::run()
 
     //the_bar->setValue(20);
 
-    QTcpSocket* m_socket = new QTcpSocket;
+    //QTcpSocket* m_socket = new QTcpSocket;
 
     QStringList str_ip_list = ip_list->toPlainText().split("\n");     //先以行分割
     QStringList str_ips_list;                                              //再以段分割
@@ -135,6 +140,9 @@ void dispatch::run()
 
     t_bar=ips_num*ports_num;
     nt_bar=0;
+    outputbusy=0;
+
+    \
         //qDebug()<<*t_bar;
 //*****************************
     for (int i = 0; i < str_ip_list.size(); ++i)

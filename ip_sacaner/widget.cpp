@@ -25,10 +25,22 @@ Widget::Widget(QWidget *parent)
 
 
 
-    main_thread = new QThread(this);
-    main_thread->start();
+    //main_thread = new QThread(this);
+    //main_thread->start();
     connect(ui->stard_scan, &QPushButton::pressed, [=]() 
         {
+
+
+        if(scan_flag==0)
+        {
+            scan_flag=1;
+
+            ui->IP_list->setReadOnly(true);
+            ui->port_list->setReadOnly(true);
+            ui->timeout->setReadOnly(true);
+            ui->threads->setReadOnly(true);
+            ui->stard_scan->setText("停止");
+
 
             dispatch* dispatch_thread;
             dispatch_thread = new dispatch;
@@ -40,15 +52,31 @@ Widget::Widget(QWidget *parent)
             dispatch_thread->now_thread_num = 0;
             dispatch_thread->timeout = ui->timeout->value();
             dispatch_thread->the_bar=ui->type_bar;
-            dispatch_thread->main_thread = main_thread;
-            dispatch_thread->moveToThread(main_thread);
+            //dispatch_thread->main_thread = main_thread;
+            //dispatch_thread->moveToThread(main_thread);
             dispatch_thread->start();
             connect(dispatch_thread, &dispatch::dispatch_finish, [=]()
                 {
                     qDebug() << "dispatch_finish";
+                    disconnect(dispatch_thread);
                     //delete dispatch_thread;
                 });
+        }else
+        {
+            //dispatch_thread->exit();
+            ui->IP_list->setReadOnly(false);
+            ui->port_list->setReadOnly(false);
+            ui->timeout->setReadOnly(false);
+            ui->threads->setReadOnly(false);
+            ui->stard_scan->setText("开始扫描");
+            scan_flag=0;
+        }
+
         });//'scan button pass'
+
+
+
+
     connect(ui->IP_list,&QTextEdit::textChanged,this, &Widget::auto_edit);
 
   
@@ -56,7 +84,7 @@ Widget::Widget(QWidget *parent)
 
 Widget::~Widget()
 {
-    main_thread->exit();
+    //main_thread->exit();
     //delete main_thread;
     delete ui;
 }
