@@ -22,14 +22,17 @@ Widget::Widget(QWidget *parent)
 
      //qDebug("hello world");
     
-    //ui->type_bar->setValue(10);
+
+
 
     main_thread = new QThread(this);
     main_thread->start();
     connect(ui->stard_scan, &QPushButton::pressed, [=]() 
         {
+
             dispatch* dispatch_thread;
             dispatch_thread = new dispatch;
+
             dispatch_thread->ip_list = ui->IP_list;
             dispatch_thread->port_list = ui->port_list;
             dispatch_thread->output_list = ui->outputlist;

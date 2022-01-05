@@ -29,7 +29,8 @@ quint32 ipv4str_to_int(const QString& ipstr)
 void trytry::run()
 {
     qDebug() << ipstr<<":"<< ipint;
-    *now_thread_num++;
+    *now_thread_num+=1;
+
     QTcpSocket m_socket;
     m_socket.connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
     if (m_socket.waitForConnected(timeout))
@@ -39,10 +40,14 @@ void trytry::run()
     }
     m_socket.disconnectFromHost();
     m_socket.disconnect();
-    *now_thread_num--;
-   
-    *nt_bar++;
-    the_bar->setValue(((*nt_bar)/(*t_bar))*100);
+    *now_thread_num-=1;
+
+    *nt_bar+=1;
+    //((*nt_bar)/(*t_bar))*100
+    //the_bar->setValue(((0.0+*nt_bar)/(*t_bar))*100);
+    //qDebug()<<((0.0+*nt_bar)/(0.0+*t_bar))*100<<"%";
+    //the_bar->setValue(10);
+    qDebug()<<*nt_bar<<"/"<<*t_bar;
 }
 
 dispatch::dispatch()
@@ -82,6 +87,7 @@ void dispatch::run()
 {
     //qDebug()<< ui->IP_list->toPlainText();
 
+    //the_bar->setValue(20);
 
     QTcpSocket* m_socket = new QTcpSocket;
 
@@ -128,7 +134,8 @@ void dispatch::run()
     }
 
     t_bar=ips_num*ports_num;
-        //qDebug()<<
+    nt_bar=0;
+        //qDebug()<<*t_bar;
 //*****************************
     for (int i = 0; i < str_ip_list.size(); ++i)
     {
@@ -192,7 +199,7 @@ void dispatch::run()
 
     }
 
-    //sleep(1);//稍微等一下其他线程完成
+    sleep(1);//稍微等一下其他线程完成
     emit dispatch_finish();
 }
 

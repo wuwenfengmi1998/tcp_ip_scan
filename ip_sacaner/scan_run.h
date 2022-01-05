@@ -40,7 +40,7 @@ public:
     quint16 set_thread_num;
     quint16 now_thread_num;
     quint16 timeout;
-    quint64 t_bar;
+    quint64 t_bar=0;
     quint64 nt_bar=0;
 
     QThread* main_thread;

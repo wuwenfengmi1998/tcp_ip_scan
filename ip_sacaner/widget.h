@@ -26,7 +26,8 @@ public:
 
     QThread* main_thread;
     
-    
+    quint64 *t_bar;
+    quint64 *nt_bar;
 
 private:
    Ui::Widget* ui;
