@@ -41,6 +41,8 @@ void trytry::run()
     m_socket.disconnect();
     *now_thread_num--;
    
+    *nt_bar++;
+    the_bar->setValue(((*nt_bar)/(*t_bar))*100);
 }
 
 dispatch::dispatch()
@@ -63,6 +65,12 @@ void dispatch::tray(const QString& ipstr, quint32 ipint)
         try_telnet->timeout = timeout;
         try_telnet->output_list = output_list;
         try_telnet->now_thread_num = &now_thread_num;
+
+        try_telnet->t_bar=&t_bar;
+        try_telnet->nt_bar=&nt_bar;
+
+        try_telnet->the_bar=the_bar;
+
         try_telnet->moveToThread(main_thread);
         try_telnet->start();
 
@@ -82,6 +90,46 @@ void dispatch::run()
 
     QStringList str_port_list = port_list->toPlainText().split("\n");
     QStringList str_ports_list;
+
+    //扫描之前先计算一共需要扫描的ip数量
+
+    quint32 ips_num=0;
+    quint32 ports_num=0;
+    for (int i = 0; i < str_ip_list.size(); ++i)
+    {
+        //qDebug() << str_ip_list.at(i);
+        str_ips_list = str_ip_list.at(i).split("-");
+        if (str_ips_list.size() > 1)
+        {
+        //ip段模式
+            ips_num=ipv4str_to_int(str_ips_list.at(str_ips_list.size() - 1))-ipv4str_to_int(str_ips_list.at(0))+1;
+        }else
+        {
+            //单ip或域名模式
+            ips_num+=1;
+
+        }
+     }
+
+
+    for (quint32 ii = 0; ii < str_port_list.size(); ii++)//分离端口
+    {
+        str_ports_list = str_port_list.at(ii).split("-");
+        if (str_ports_list.size() > 1)
+        {
+            //端口段模式
+            ports_num=str_ports_list.at(str_ports_list.size() - 1).toInt() -str_ports_list.at(0).toInt()+1;
+        }
+        else
+        {
+            //单端口模式
+            ports_num+=1;
+        }
+    }
+
+    t_bar=ips_num*ports_num;
+        //qDebug()<<
+//*****************************
     for (int i = 0; i < str_ip_list.size(); ++i)
     {
         //qDebug() << str_ip_list.at(i);

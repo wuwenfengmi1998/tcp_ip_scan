@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'widget.ui'
 **
-** Created by: Qt User Interface Compiler version 6.2.2
+** Created by: Qt User Interface Compiler version 5.12.12
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -12,6 +12,7 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QTextEdit>
@@ -34,6 +35,7 @@ public:
     QTextEdit *outputlist;
     QLabel *label_2;
     QSpinBox *timeout;
+    QProgressBar *type_bar;
 
     void setupUi(QWidget *Widget)
     {
@@ -74,7 +76,7 @@ public:
         label->setGeometry(QRect(10, 20, 141, 71));
         outputlist = new QTextEdit(Widget);
         outputlist->setObjectName(QString::fromUtf8("outputlist"));
-        outputlist->setGeometry(QRect(10, 270, 581, 221));
+        outputlist->setGeometry(QRect(10, 300, 581, 191));
         outputlist->setReadOnly(true);
         label_2 = new QLabel(Widget);
         label_2->setObjectName(QString::fromUtf8("label_2"));
@@ -85,6 +87,10 @@ public:
         timeout->setMinimum(1);
         timeout->setMaximum(1000);
         timeout->setValue(100);
+        type_bar = new QProgressBar(Widget);
+        type_bar->setObjectName(QString::fromUtf8("type_bar"));
+        type_bar->setGeometry(QRect(10, 270, 581, 23));
+        type_bar->setValue(0);
 
         retranslateUi(Widget);
 
@@ -93,20 +99,20 @@ public:
 
     void retranslateUi(QWidget *Widget)
     {
-        Widget->setWindowTitle(QCoreApplication::translate("Widget", "Widget", nullptr));
-        label_3->setText(QCoreApplication::translate("Widget", "\347\253\257\345\217\243\350\214\203\345\233\264\n"
+        Widget->setWindowTitle(QApplication::translate("Widget", "Widget", nullptr));
+        label_3->setText(QApplication::translate("Widget", "\347\253\257\345\217\243\350\214\203\345\233\264\n"
 "80\n"
 "443\n"
 "3000-65535", nullptr));
-        stard_scan->setText(QCoreApplication::translate("Widget", "\345\274\200\345\247\213\346\211\253\346\217\217", nullptr));
-        label_4->setText(QCoreApplication::translate("Widget", "\347\272\277\347\250\213", nullptr));
-        label_5->setText(QCoreApplication::translate("Widget", "\346\211\253\346\217\217\347\273\223\346\236\234", nullptr));
-        pushButton->setText(QCoreApplication::translate("Widget", "\344\277\235\345\255\230\346\211\253\346\217\217\347\273\223\346\236\234", nullptr));
-        label->setText(QCoreApplication::translate("Widget", "IP\350\214\203\345\233\264\n"
+        stard_scan->setText(QApplication::translate("Widget", "\345\274\200\345\247\213\346\211\253\346\217\217", nullptr));
+        label_4->setText(QApplication::translate("Widget", "\347\272\277\347\250\213", nullptr));
+        label_5->setText(QApplication::translate("Widget", "\346\211\253\346\217\217\347\273\223\346\236\234", nullptr));
+        pushButton->setText(QApplication::translate("Widget", "\344\277\235\345\255\230\346\211\253\346\217\217\347\273\223\346\236\234", nullptr));
+        label->setText(QApplication::translate("Widget", "IP\350\214\203\345\233\264\n"
 "127.0.0.1\n"
 "0.0.0.0-255.255.255.255\n"
 "domain.com", nullptr));
-        label_2->setText(QCoreApplication::translate("Widget", "\350\266\205\346\227\266ms", nullptr));
+        label_2->setText(QApplication::translate("Widget", "\350\266\205\346\227\266ms", nullptr));
     } // retranslateUi
 
 };

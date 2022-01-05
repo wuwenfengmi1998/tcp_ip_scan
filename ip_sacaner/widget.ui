@@ -152,9 +152,9 @@ domain.com</string>
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>270</y>
+     <y>300</y>
      <width>581</width>
-     <height>221</height>
+     <height>191</height>
     </rect>
    </property>
    <property name="readOnly">
@@ -191,6 +191,19 @@ domain.com</string>
    </property>
    <property name="value">
     <number>100</number>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="type_bar">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>581</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="value">
+    <number>0</number>
    </property>
   </widget>
  </widget>

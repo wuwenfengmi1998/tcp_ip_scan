@@ -22,7 +22,7 @@ Widget::Widget(QWidget *parent)
 
      //qDebug("hello world");
     
-
+    //ui->type_bar->setValue(10);
 
     main_thread = new QThread(this);
     main_thread->start();
@@ -36,6 +36,7 @@ Widget::Widget(QWidget *parent)
             dispatch_thread->set_thread_num = ui->threads->value();
             dispatch_thread->now_thread_num = 0;
             dispatch_thread->timeout = ui->timeout->value();
+            dispatch_thread->the_bar=ui->type_bar;
             dispatch_thread->main_thread = main_thread;
             dispatch_thread->moveToThread(main_thread);
             dispatch_thread->start();

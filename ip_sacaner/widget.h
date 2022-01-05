@@ -27,9 +27,9 @@ public:
     QThread* main_thread;
     
     
-    Ui::Widget* ui;
+
 private:
-   
+   Ui::Widget* ui;
 };
 
 

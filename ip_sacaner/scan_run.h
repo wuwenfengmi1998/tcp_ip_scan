@@ -5,8 +5,10 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <QTextEdit>
+#include <QProgressBar>
 #include <QDebug>
 #include <QTcpSocket>  //socket
+
 
 
 class trytry : public QThread
@@ -19,6 +21,10 @@ public:
     quint32 ipint;
     quint16 *now_thread_num;
     QTextEdit* output_list;
+
+    quint64 *t_bar;
+    quint64 *nt_bar;
+    QProgressBar* the_bar;
     void run();
 
 
@@ -34,13 +40,14 @@ public:
     quint16 set_thread_num;
     quint16 now_thread_num;
     quint16 timeout;
-
+    quint64 t_bar;
+    quint64 nt_bar=0;
 
     QThread* main_thread;
     QTextEdit* ip_list;
     QTextEdit* port_list;
     QTextEdit* output_list;
-
+    QProgressBar* the_bar;
     trytry* try_telnet;
 
     void tray(const QString& ipstr, quint32 ipint);
