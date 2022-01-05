@@ -20,7 +20,7 @@ public:
     quint16 timeout;
     QString ipstr;
     quint32 ipint;
-    quint16 *now_thread_num;
+    int *now_thread_num;
     QTextEdit* output_list;
 
     quint64 *t_bar;
@@ -38,8 +38,8 @@ public:
 
     dispatch();
 
-    quint16 set_thread_num;
-    quint16 now_thread_num;
+    int set_thread_num;
+    int now_thread_num;
     quint16 timeout;
     quint64 t_bar=0;
     quint64 nt_bar=0;

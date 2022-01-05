@@ -57,6 +57,12 @@ Widget::Widget(QWidget *parent)
             dispatch_thread->start();
             connect(dispatch_thread, &dispatch::dispatch_finish, [=]()
                 {
+                    ui->IP_list->setReadOnly(false);
+                    ui->port_list->setReadOnly(false);
+                    ui->timeout->setReadOnly(false);
+                    ui->threads->setReadOnly(false);
+                    ui->stard_scan->setText("开始扫描");
+                    scan_flag=0;
                     qDebug() << "dispatch_finish";
                     disconnect(dispatch_thread);
                     //delete dispatch_thread;
@@ -64,12 +70,7 @@ Widget::Widget(QWidget *parent)
         }else
         {
             //dispatch_thread->exit();
-            ui->IP_list->setReadOnly(false);
-            ui->port_list->setReadOnly(false);
-            ui->timeout->setReadOnly(false);
-            ui->threads->setReadOnly(false);
-            ui->stard_scan->setText("开始扫描");
-            scan_flag=0;
+
         }
 
         });//'scan button pass'
