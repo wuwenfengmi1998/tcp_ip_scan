@@ -21,6 +21,7 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+    dispatch *dispatch_thread;
 
     void auto_edit();
 

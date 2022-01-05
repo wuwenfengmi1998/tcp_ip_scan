@@ -30,7 +30,6 @@ void trytry::run()
 {
     //qDebug() << ipstr<<":"<< ipint;
 
-
     QTcpSocket m_socket;
     m_socket.connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
     if (m_socket.waitForConnected(timeout))
@@ -39,22 +38,20 @@ void trytry::run()
         *outputbusy=1;
         QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
         output_list->append(temp);
+        //msleep(1);
         *outputbusy=0;
     }
     m_socket.disconnectFromHost();
     m_socket.disconnect();
 
-    //msleep(timeout);//test
-
-
+    //qDebug()<<*nt_bar<<"/"<<*t_bar;
+    while(*barbusy);
+    *barbusy=1;
     *now_thread_num-=1;
-
     *nt_bar+=1;
-    //((*nt_bar)/(*t_bar))*100
-    //the_bar->setValue(((0.0+*nt_bar)/(*t_bar))*100);
-    //qDebug()<<((0.0+*nt_bar)/(0.0+*t_bar))*100<<"%";
-    //the_bar->setValue(10);
-    qDebug()<<*nt_bar<<"/"<<*t_bar;
+    //str.asprintf("停止 %.3f",((0.0+*nt_bar)/(0.0+*t_bar))*100);
+    bt->setText(QString("%1%").arg(((0.0+*nt_bar)/(0.0+*t_bar))*100));
+    *barbusy=0;
 }
 
 dispatch::dispatch()
@@ -80,7 +77,7 @@ void dispatch::tray(const QString& ipstr, quint32 ipint)
         try_telnet->ipint = ipint;
         try_telnet->timeout = timeout;
         try_telnet->output_list = output_list;
-
+        try_telnet->bt=bt;
 
         try_telnet->now_thread_num = &now_thread_num;
 
@@ -88,8 +85,9 @@ void dispatch::tray(const QString& ipstr, quint32 ipint)
         try_telnet->nt_bar=&nt_bar;
 
         try_telnet->outputbusy=&outputbusy;
+        try_telnet->barbusy=&barbusy;
 
-        try_telnet->the_bar=the_bar;
+
 
         //try_telnet->moveToThread(main_thread);
         try_telnet->start();
@@ -101,6 +99,8 @@ void dispatch::tray(const QString& ipstr, quint32 ipint)
 
 void dispatch::run()
 {
+
+
     //qDebug()<< ui->IP_list->toPlainText();
 
     //the_bar->setValue(20);

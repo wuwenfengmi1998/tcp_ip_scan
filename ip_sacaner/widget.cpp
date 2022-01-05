@@ -42,20 +42,22 @@ Widget::Widget(QWidget *parent)
             ui->stard_scan->setText("停止");
 
 
-            dispatch* dispatch_thread;
+            //dispatch* dispatch_thread;
             dispatch_thread = new dispatch;
 
             dispatch_thread->ip_list = ui->IP_list;
             dispatch_thread->port_list = ui->port_list;
             dispatch_thread->output_list = ui->outputlist;
+            dispatch_thread->bt=ui->type_bar;
+
             dispatch_thread->set_thread_num = ui->threads->value();
             dispatch_thread->now_thread_num = 0;
             dispatch_thread->timeout = ui->timeout->value();
-            dispatch_thread->the_bar=ui->type_bar;
+
             //dispatch_thread->main_thread = main_thread;
             //dispatch_thread->moveToThread(main_thread);
             dispatch_thread->start();
-            connect(dispatch_thread, &dispatch::dispatch_finish, [=]()
+            connect(dispatch_thread, &dispatch::finished, [=]()
                 {
                     ui->IP_list->setReadOnly(false);
                     ui->port_list->setReadOnly(false);
@@ -69,7 +71,8 @@ Widget::Widget(QWidget *parent)
                 });
         }else
         {
-            //dispatch_thread->exit();
+            qDebug() << "tray_exit";
+            dispatch_thread->terminate();
 
         }
 
