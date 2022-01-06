@@ -29,8 +29,8 @@ public:
     
     qint16 scan_flag=0;
 
-    quint64 *t_bar;
-    quint64 *nt_bar;
+    quint64 t_bar=0;
+    quint64 nt_bar=0;
 
 
 private:

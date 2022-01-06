@@ -48,15 +48,24 @@ Widget::Widget(QWidget *parent)
             dispatch_thread->ip_list = ui->IP_list;
             dispatch_thread->port_list = ui->port_list;
             dispatch_thread->output_list = ui->outputlist;
-            dispatch_thread->bt=ui->type_bar;
+
 
             dispatch_thread->set_thread_num = ui->threads->value();
             dispatch_thread->now_thread_num = 0;
             dispatch_thread->timeout = ui->timeout->value();
 
+            dispatch_thread->nt_bar=&nt_bar;
+            dispatch_thread->t_bar=&t_bar;
+
             //dispatch_thread->main_thread = main_thread;
             //dispatch_thread->moveToThread(main_thread);
-            dispatch_thread->start();
+            connect(dispatch_thread, &dispatch::dispatch_one, [=]()
+                {
+                    qDebug()<<100*nt_bar/t_bar;
+                    //ui->t_bar->setValue(100*nt_bar/t_bar);
+                    ui->stard_scan->setText(QString("停止 %1%").arg(100*nt_bar/t_bar));
+
+                });
             connect(dispatch_thread, &dispatch::finished, [=]()
                 {
                     qDebug() << "dispatch_finish";
@@ -70,6 +79,7 @@ Widget::Widget(QWidget *parent)
                     disconnect(dispatch_thread);
                     //delete dispatch_thread;
                 });
+            dispatch_thread->start();
         }else
         {
             qDebug() << "tray_exit";

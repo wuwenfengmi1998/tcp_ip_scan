@@ -23,7 +23,7 @@ public:
     quint32 ipint;
     int *now_thread_num;
     QTextEdit* output_list;
-    QLabel *bt;
+
     quint64 *t_bar;
     quint64 *nt_bar;
 
@@ -41,16 +41,17 @@ public:
 
     int set_thread_num;
     int now_thread_num;
+    int thread_start_lock=0;
     quint16 timeout;
-    quint64 t_bar=0;
-    quint64 nt_bar=0;
+    quint64 *t_bar;
+    quint64 *nt_bar;
     quint16 outputbusy=0;
     quint16 barbusy=0;
     //QThread* main_thread;
     QTextEdit* ip_list;
     QTextEdit* port_list;
     QTextEdit* output_list;
-    QLabel *bt;
+
     trytry* try_telnet;
 
     void tray(const QString& ipstr, quint32 ipint);
@@ -58,6 +59,7 @@ public:
 
 signals:
     void dispatch_finish();
+    void dispatch_one();
 };
 
 
