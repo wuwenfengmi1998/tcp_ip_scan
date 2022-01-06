@@ -35,23 +35,25 @@ void trytry::run()
     if (m_socket.waitForConnected(timeout))
     {
         while(*outputbusy);
-        *outputbusy=1;
+        *outputbusy+=1;
         QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
         output_list->append(temp);
         //msleep(1);
-        *outputbusy=0;
+        *outputbusy-=1;
     }
     m_socket.disconnectFromHost();
     m_socket.disconnect();
 
-    //qDebug()<<*nt_bar<<"/"<<*t_bar;
-    while(*barbusy);
-    *barbusy=1;
-    *now_thread_num-=1;
+
+    //while(*barbusy);
+    //*barbusy+=1;
     *nt_bar+=1;
     //str.asprintf("停止 %.3f",((0.0+*nt_bar)/(0.0+*t_bar))*100);
-    bt->setText(QString("%1%").arg(((0.0+*nt_bar)/(0.0+*t_bar))*100));
-    *barbusy=0;
+    //bt->setText(QString("%1%").arg(((0.0+*nt_bar)/(0.0+*t_bar))*100));
+    qDebug()<<*nt_bar<<"/"<<*t_bar;
+    //*barbusy-=1;
+
+    *now_thread_num-=1;
 }
 
 dispatch::dispatch()
