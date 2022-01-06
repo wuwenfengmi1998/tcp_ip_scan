@@ -28,7 +28,7 @@ quint32 ipv4str_to_int(const QString& ipstr)
 
 void trytry::run()
 {
-    //qDebug() << ipstr<<":"<< ipint;
+
 
     QTcpSocket m_socket;
     m_socket.connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
@@ -37,7 +37,8 @@ void trytry::run()
         while(*outputbusy);
         *outputbusy+=1;
         QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
-        output_list->append(temp);
+        //output_list->append(temp);
+        qDebug() << ipstr<<":"<< ipint;
         //msleep(1);
         *outputbusy-=1;
     }
@@ -50,7 +51,7 @@ void trytry::run()
     *nt_bar+=1;
     //str.asprintf("停止 %.3f",((0.0+*nt_bar)/(0.0+*t_bar))*100);
     //bt->setText(QString("%1%").arg(((0.0+*nt_bar)/(0.0+*t_bar))*100));
-    qDebug()<<*nt_bar<<"/"<<*t_bar;
+    //qDebug()<<*nt_bar<<"/"<<*t_bar;
     //*barbusy-=1;
 
     *now_thread_num-=1;
