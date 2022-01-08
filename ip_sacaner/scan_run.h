@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QTcpSocket>  //socket
 #include <QLabel>
-
+#include <QPlainTextEdit>
 
 
 
@@ -48,8 +48,8 @@ public:
     quint16 outputbusy=0;
     quint16 barbusy=0;
     //QThread* main_thread;
-    QTextEdit* ip_list;
-    QTextEdit* port_list;
+    QPlainTextEdit* ip_list;
+    QPlainTextEdit* port_list;
     QTextEdit* output_list;
 
     trytry* try_telnet;

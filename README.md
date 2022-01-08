@@ -1,9 +1,23 @@
 ## tcp_ip_scan
+![Qt_logo_2016.svg.png][1]  
+摸了很长时间，又把QT捡起来学习了，突然想到的一个项目，想扫描一下网上有多少隐藏的Minecraft服务器。
+其实IP扫描器网上也有很多，我也用过来扫描我所在地区的ip段的80、25565端口，扫到了就进去参观一下。
+  然后我自己又写一个扫描器的初衷是想优化，输入的方式的。
+这是我在网上找的扫描器
+有一说一真的挺好用，就是只能扫1段，而且不支持域名。
+然后这个是我做的
+![捕获.PNG][2]
+丑了一点，但也不是不能用。
+可以扫描多个个独立ip、多个ip段、多个域名的任意端口、端口段。
+支持多线程，不建议不建议超过100线程，我对QT的多线程还不是很理解，是不是线程会暴毙又或者无法正常结束。
+实测在Qt5.12下就会出现线程无法正常结束的问题，所以这是在Qt6.2.2下编译的。（其实问题依然存在）太多线程的时候会有那么一两个线程无法正常结束。正在研究中。
+  持续学习研究中，计划会加入IPv6的支持，会优化外观细节。
+项目地址
+[我的git服务器][3]
+[github][4]
 
 
-
-扫描ip段的tcp端口
-
-工程同步地址
-gitlmve:https://git.lmve.net/summary/~kevin%2Ftcp_ip_scan.git
-github:https://github.com/wuwenfengmi1998/tcp_ip_scan
+  [1]: https://wnfed.com/usr/uploads/2022/01/2803635156.png
+  [2]: https://wnfed.com/usr/uploads/2022/01/1412970345.png
+  [3]: https://git.lmve.net/summary/~kevin%2Ftcp_ip_scan.git
+  [4]: https://github.com/wuwenfengmi1998/tcp_ip_scan

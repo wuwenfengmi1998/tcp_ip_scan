@@ -61,7 +61,7 @@ Widget::Widget(QWidget *parent)
             //dispatch_thread->moveToThread(main_thread);
             connect(dispatch_thread, &dispatch::dispatch_one, [=]()
                 {
-                    qDebug()<<100*nt_bar/t_bar;
+                    //qDebug()<<100*nt_bar/t_bar;
                     //ui->t_bar->setValue(100*nt_bar/t_bar);
                     ui->stard_scan->setText(QString("停止 %1%").arg(100*nt_bar/t_bar));
 
@@ -92,7 +92,7 @@ Widget::Widget(QWidget *parent)
 
 
 
-    connect(ui->IP_list,&QTextEdit::textChanged,this, &Widget::auto_edit);
+    //connect(ui->IP_list,&QTextEdit::textChanged,this, &Widget::auto_edit);
 
   
 }
