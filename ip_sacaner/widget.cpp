@@ -20,81 +20,56 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-     //qDebug("hello world");
-    
+    ui->outputlist->setReadOnly(true);
+    ui->stard_scan->setText("start scan");
 
+    connect(this,&Widget::start_scan,[=]{
+        scan_flag=1;
+        ui->IP_list->setReadOnly(true);
+        ui->port_list->setReadOnly(true);
+        ui->timeout->setReadOnly(true);
+        ui->threads->setReadOnly(true);
+        ui->stard_scan->setText("stop scan");
+        dispatch_thread = new dispatch;//线程分发
+        dispatch_thread->ip_list=ui->IP_list->toPlainText();
+        dispatch_thread->port_list=ui->port_list->toPlainText();
+        dispatch_thread->set_thread_num = ui->threads->value();
+        dispatch_thread->now_thread_num = 0;
+        dispatch_thread->timeout = ui->timeout->value();
+        connect(dispatch_thread,&dispatch::dispatch_finish,[=]{
+           emit stop_scan();
+        });
+        dispatch_thread->start();
 
+    });
 
-    //main_thread = new QThread(this);
-    //main_thread->start();
-    connect(ui->stard_scan, &QPushButton::pressed, [=]() 
-        {
+    connect(this,&Widget::stop_scan,[=]{
+        scan_flag=0;
+        ui->IP_list->setReadOnly(false);
+        ui->port_list->setReadOnly(false);
+        ui->timeout->setReadOnly(false);
+        ui->threads->setReadOnly(false);
+        ui->stard_scan->setText("start scan");
+        qDebug() << "tray_exit";
+        dispatch_thread->disconnect();
+        dispatch_thread->terminate();
+        delete dispatch_thread;
 
+    });
 
+    connect(ui->stard_scan, &QPushButton::pressed, [=]()
+    {
         if(scan_flag==0)
         {
-            scan_flag=1;
-
-            ui->IP_list->setReadOnly(true);
-            ui->port_list->setReadOnly(true);
-            ui->timeout->setReadOnly(true);
-            ui->threads->setReadOnly(true);
-            ui->stard_scan->setText("停止");
-
-
-            //dispatch* dispatch_thread;
-            dispatch_thread = new dispatch;
-
-            dispatch_thread->ip_list = ui->IP_list;
-            dispatch_thread->port_list = ui->port_list;
-            dispatch_thread->output_list = ui->outputlist;
-
-
-            dispatch_thread->set_thread_num = ui->threads->value();
-            dispatch_thread->now_thread_num = 0;
-            dispatch_thread->timeout = ui->timeout->value();
-
-            dispatch_thread->nt_bar=&nt_bar;
-            dispatch_thread->t_bar=&t_bar;
-
-            //dispatch_thread->main_thread = main_thread;
-            //dispatch_thread->moveToThread(main_thread);
-            connect(dispatch_thread, &dispatch::dispatch_one, [=]()
-                {
-                    //qDebug()<<100*nt_bar/t_bar;
-                    //ui->t_bar->setValue(100*nt_bar/t_bar);
-                    ui->stard_scan->setText(QString("停止 %1%").arg(100*nt_bar/t_bar));
-
-                });
-            connect(dispatch_thread, &dispatch::finished, [=]()
-                {
-                    qDebug() << "dispatch_finish";
-                    ui->IP_list->setReadOnly(false);
-                    ui->port_list->setReadOnly(false);
-                    ui->timeout->setReadOnly(false);
-                    ui->threads->setReadOnly(false);
-                    ui->stard_scan->setText("开始扫描");
-                    scan_flag=0;
-
-                    disconnect(dispatch_thread);
-                    //delete dispatch_thread;
-                });
-            dispatch_thread->start();
+            emit start_scan();
         }else
         {
-            qDebug() << "tray_exit";
-            dispatch_thread->terminate();
+           emit stop_scan();
 
         }
 
         });//'scan button pass'
 
-
-
-
-    //connect(ui->IP_list,&QTextEdit::textChanged,this, &Widget::auto_edit);
-
-  
 }
 
 Widget::~Widget()

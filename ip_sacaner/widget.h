@@ -33,6 +33,9 @@ public:
     quint64 t_bar=0;
     quint64 nt_bar=0;
 
+signals:
+    void stop_scan();
+    void start_scan();
 
 private:
    Ui::Widget* ui;
