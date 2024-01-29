@@ -9,7 +9,7 @@
 #include <QTcpSocket>  //socket
 #include <QLabel>
 #include <QPlainTextEdit>
-
+#include <qmath.h>
 
 
 class trytry : public QThread

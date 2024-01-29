@@ -42,12 +42,12 @@ void dispatch::run()
 {
     QStringList str_ip_list = ip_list.split("\n");
     QStringList str_ips_list;
-
+    QStringList str_list_more;
+    quint32 ipa,ipb;
     QStringList str_port_list = port_list.split("\n");
     QStringList str_ports_list;
 
-    quint32 ips_num=0;
-    quint32 ports_num=0;
+    quint64 ips_num=0;
     QRegExp ex_ipv4     ("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
     QRegExp ex_ipv4_more("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)-((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
     QRegExp ex_ipv4_more2("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)/(0?[0-9]|1[0-9]|2[0-9]|3[0-2])$");
@@ -60,30 +60,73 @@ void dispatch::run()
         if(ex_ipv4.exactMatch(str_ip_list.at(i)))
         {
             qDebug() << str_ip_list.at(i)<<" is ipv4";
+            str_ips_list.append(str_ip_list.at(i));
+            ips_num+=1;
         }else if(ex_ipv4_more.exactMatch(str_ip_list.at(i)))
         {
-
             qDebug() << str_ip_list.at(i)<<" is ipv4_more";
+            str_list_more=str_ip_list.at(i).split("-");
+           ipa=ipv4str_to_int(str_list_more.at(0));
+           ipb=ipv4str_to_int(str_list_more.at(1));
+           if(ipa>ipb)
+           {
+                for(;ipb<=ipa;ipb++)
+                {
+                    str_ips_list.append(ipv4int_to_str(ipb));
+                    ips_num+=1;
+                }
+           }else if(ipb>ipa)
+           {
+               for(;ipa<=ipb;ipa++)
+               {
+                   str_ips_list.append(ipv4int_to_str(ipa));
+                   ips_num+=1;
+               }
+           }else//=
+           {
+               str_ips_list.append(ipv4int_to_str(ipa));
+               ips_num+=1;
+           }
+
         }else if(ex_ipv4_more2.exactMatch(str_ip_list.at(i)))
         {
 
             qDebug() << str_ip_list.at(i)<<" is ipv4_more2";
+            str_list_more=str_ip_list.at(i).split("/");
+           ipa=ipv4str_to_int(str_list_more.at(0));
+           ipb=qPow(2,(32-str_list_more.at(1).toInt()));
+           for(quint32 ii=0;ii<ipb;ii++)
+           {
+               str_ips_list.append(ipv4int_to_str(ipa+ii));
+               ips_num+=1;
+           }
+
         }else if(ex_ipv6.exactMatch(str_ip_list.at(i)))
         {
 
             qDebug() << str_ip_list.at(i)<<" is ipv6";
+            str_ips_list.append(str_ip_list.at(i));
+            ips_num+=1;
         }else if(ex_domain.exactMatch(str_ip_list.at(i)))
         {
 
             qDebug() << str_ip_list.at(i)<<" is domain";
+            str_ips_list.append(str_ip_list.at(i));
+            ips_num+=1;
         }else
         {
             qDebug() << str_ip_list.at(i)<<" don't know what is thit";
         }
+
+
      }
 
-   qDebug() << ips_num;
+   qDebug() << str_ips_list.size();
+    for(int ii=0;ii<str_ips_list.size();ii++)
+    {
 
+        qDebug() << str_ips_list.at(ii);
+    }
 
     emit dispatch_finish();
 }
