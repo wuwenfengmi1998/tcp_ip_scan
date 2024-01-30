@@ -42,30 +42,23 @@ void trytry::run()
 
     QTcpSocket *m_socket=new QTcpSocket;
 
-    connect(m_socket,&QTcpSocket::disconnected,[=]{
-        qDebug()<<temp<<"Disconnected";
-        //m_socket->disconnect();
-        m_socket->close();
-        m_socket->flush();
-        m_socket->deleteLater();
-        delete m_socket;
-    });
-    connect(m_socket,&QTcpSocket::connected,[=]{
-        emit connect_ok(temp);
-        qDebug()<<temp;
-    });
 
     m_socket->connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
     if(m_socket->waitForConnected(timeout))
     {
-
+        emit connect_ok(temp);
+        qDebug()<<temp;
     }else
     {
 
     }
 
     m_socket->disconnectFromHost();
+    m_socket->close();
+    m_socket->flush();
+    m_socket->deleteLater();
 
+    delete m_socket;
     emit try_one(-1);
 
 }

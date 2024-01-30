@@ -114,6 +114,12 @@ Widget::Widget(QWidget *parent)
 
     });
 
+    connect(ui->pushButton_20, &QPushButton::pressed, [=]()
+    {
+
+
+     });
+
     connect(ui->stard_scan, &QPushButton::pressed, [=]()
     {
         ui->stard_scan->setDisabled(true);
