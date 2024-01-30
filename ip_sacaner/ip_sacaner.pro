@@ -26,3 +26,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 #QMAKE_LFLAGS += "/STACK:65536,4096"
+
+RESOURCES += \
+    myres.qrc
+
