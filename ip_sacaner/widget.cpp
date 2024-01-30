@@ -3,7 +3,55 @@
 
 
 
+void Widget::keyboard_en(bool a)
+{
+    ui->pushButton_2->setDisabled(a);
+    ui->pushButton_3->setDisabled(a);
+    ui->pushButton_4->setDisabled(a);
+    ui->pushButton_5->setDisabled(a);
+    ui->pushButton_6->setDisabled(a);
+    ui->pushButton_7->setDisabled(a);
+    ui->pushButton_8->setDisabled(a);
+    ui->pushButton_9->setDisabled(a);
+    ui->pushButton_10->setDisabled(a);
+    ui->pushButton_11->setDisabled(a);
+    ui->pushButton_12->setDisabled(a);
+    ui->pushButton_13->setDisabled(a);
+    ui->pushButton_14->setDisabled(a);
+    ui->pushButton_15->setDisabled(a);
+    ui->pushButton_16->setDisabled(a);
+    ui->pushButton_17->setDisabled(a);
+    ui->pushButton_18->setDisabled(a);
+    ui->pushButton_19->setDisabled(a);
+    ui->pushButton_20->setDisabled(a);
+    ui->pushButton_21->setDisabled(a);
+    ui->pushButton_22->setDisabled(a);
+    ui->pushButton_23->setDisabled(a);
+    ui->pushButton_24->setDisabled(a);
+    ui->pushButton_25->setDisabled(a);
+    ui->pushButton_26->setDisabled(a);
+    ui->pushButton_27->setDisabled(a);
+    ui->pushButton_28->setDisabled(a);
+    ui->pushButton_29->setDisabled(a);
+    ui->pushButton_30->setDisabled(a);
+    ui->pushButton_31->setDisabled(a);
+    ui->pushButton_32->setDisabled(a);
+    ui->pushButton_33->setDisabled(a);
+    ui->pushButton_34->setDisabled(a);
+    ui->pushButton_35->setDisabled(a);
+    ui->pushButton_36->setDisabled(a);
+    ui->pushButton_37->setDisabled(a);
+    ui->pushButton_38->setDisabled(a);
+    ui->pushButton_39->setDisabled(a);
+    ui->pushButton_40->setDisabled(a);
+    ui->pushButton_41->setDisabled(a);
+    ui->pushButton_42->setDisabled(a);
+    ui->pushButton_43->setDisabled(a);
+    ui->pushButton_44->setDisabled(a);
 
+
+
+}
 
 void Widget::output_chuli(QString temp)
 {
@@ -29,6 +77,7 @@ Widget::Widget(QWidget *parent)
 
     connect(this,&Widget::start_scan,[=]{
         scan_flag=1;
+        keyboard_en(true);
         ui->IP_list->setReadOnly(true);
         ui->port_list->setReadOnly(true);
         ui->timeout->setReadOnly(true);
@@ -52,6 +101,7 @@ Widget::Widget(QWidget *parent)
 
     connect(this,&Widget::stop_scan,[=]{
         scan_flag=0;
+        keyboard_en(false);
         ui->IP_list->setReadOnly(false);
         ui->port_list->setReadOnly(false);
         ui->timeout->setReadOnly(false);

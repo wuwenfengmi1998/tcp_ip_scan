@@ -35,6 +35,7 @@ public:
 
     void output_chuli(QString temp);
     void jindu_chuli(quint16 temp);
+    void keyboard_en(bool a);
 signals:
     void stop_scan();
     void start_scan();
