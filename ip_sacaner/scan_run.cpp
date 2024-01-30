@@ -34,7 +34,7 @@ trytryping::trytryping()
 void trytryping::run()
 {
     emit try_one(1);
-    qint16 exitCode;
+    qint16 exitCode=0;
     QString ip=this->ipstr;
     #ifdef Q_OS_WIN
             QString strArg = "ping " + ip + " -n 1 -i 2";
@@ -46,12 +46,12 @@ void trytryping::run()
     if(0 == exitCode)
     {
         //it's alive
-        qDebug() << "shell ping " + ip + " sucessed!";
-        emit connect_ok(this->ipstr);
+        //qDebug() << "shell ping " + ip + " sucessed!";
+        emit connect_ok(QString("Ping ").append(ip));
         //发射该IP在线的信号
 
     } else {
-        qDebug() << "shell ping " + ip + " failed!";
+        //qDebug() << "shell ping " + ip + " failed!";
         //发射IP离线的信号
 
     }
