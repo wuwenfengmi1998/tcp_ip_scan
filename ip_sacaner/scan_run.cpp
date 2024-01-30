@@ -56,7 +56,14 @@ void trytry::run()
     });
 
     m_socket->connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
-    m_socket->waitForConnected(timeout);
+    if(m_socket->waitForConnected(timeout))
+    {
+
+    }else
+    {
+
+    }
+
     m_socket->disconnectFromHost();
 
     emit try_one(-1);

@@ -23,7 +23,6 @@ void Widget::keyboard_en(bool a)
     ui->pushButton_17->setDisabled(a);
     ui->pushButton_18->setDisabled(a);
     ui->pushButton_19->setDisabled(a);
-    ui->pushButton_20->setDisabled(a);
     ui->pushButton_21->setDisabled(a);
     ui->pushButton_22->setDisabled(a);
     ui->pushButton_23->setDisabled(a);
@@ -49,6 +48,10 @@ void Widget::keyboard_en(bool a)
     ui->pushButton_43->setDisabled(a);
     ui->pushButton_44->setDisabled(a);
 
+    ui->IP_list->setReadOnly(a);
+    ui->port_list->setReadOnly(a);
+    ui->timeout->setReadOnly(a);
+    ui->threads->setReadOnly(a);
 
 
 }
@@ -78,10 +81,7 @@ Widget::Widget(QWidget *parent)
     connect(this,&Widget::start_scan,[=]{
         scan_flag=1;
         keyboard_en(true);
-        ui->IP_list->setReadOnly(true);
-        ui->port_list->setReadOnly(true);
-        ui->timeout->setReadOnly(true);
-        ui->threads->setReadOnly(true);
+
         ui->stard_scan->setText("stop scan");
         dispatch_thread = new dispatch;//线程分发
         dispatch_thread->ip_list=ui->IP_list->toPlainText();
@@ -102,10 +102,7 @@ Widget::Widget(QWidget *parent)
     connect(this,&Widget::stop_scan,[=]{
         scan_flag=0;
         keyboard_en(false);
-        ui->IP_list->setReadOnly(false);
-        ui->port_list->setReadOnly(false);
-        ui->timeout->setReadOnly(false);
-        ui->threads->setReadOnly(false);
+
         ui->stard_scan->setText("start scan");
 
         //dispatch_thread->disconnect();
