@@ -33,6 +33,7 @@ public:
     quint64 t_bar=0;
     quint64 nt_bar=0;
 
+    void jindu_chuli(quint16 temp);
 signals:
     void stop_scan();
     void start_scan();

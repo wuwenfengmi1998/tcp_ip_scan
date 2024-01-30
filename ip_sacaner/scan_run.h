@@ -10,23 +10,17 @@
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <qmath.h>
-
+#include <QFloat16>
 
 class trytry : public QThread
 {
+    Q_OBJECT
 public:
+    trytry();
 
-    quint16 *outputbusy;
-    quint16 *barbusy;
     quint16 timeout;
     QString ipstr;
     quint32 ipint;
-    int *now_thread_num;
-    QTextEdit* output_list;
-
-    quint64 *t_bar;
-    quint64 *nt_bar;
-
     void run();
 
 
@@ -47,7 +41,7 @@ public:
     QString ip_list;
     QString port_list;
 
-
+    trytry *connecttry;
 
 
     void run();
@@ -55,6 +49,7 @@ public:
 signals:
     void dispatch_finish();
     void dispatch_one();
+    void return_jindu(quint16);
 };
 
 
