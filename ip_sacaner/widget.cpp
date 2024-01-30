@@ -58,7 +58,7 @@ Widget::Widget(QWidget *parent)
         ui->threads->setReadOnly(false);
         ui->stard_scan->setText("start scan");
 
-        dispatch_thread->disconnect();
+        //dispatch_thread->disconnect();
         dispatch_thread->quit();
         dispatch_thread->wait();
         //delete dispatch_thread;
@@ -320,6 +320,12 @@ Widget::Widget(QWidget *parent)
 
      });
 
+    connect(ui->clearoutput, &QPushButton::pressed, [=]()
+    {
+
+        ui->outputlist->clear();
+
+     });
 }
 
 Widget::~Widget()

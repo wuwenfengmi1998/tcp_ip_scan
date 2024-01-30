@@ -39,17 +39,23 @@ void trytry::run()
     emit try_one(1);
     QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
 
-    QTcpSocket m_socket;
-    m_socket.connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
-    if (m_socket.waitForConnected(timeout))
-    {
-        emit connect_ok(temp);
-    }
-    m_socket.disconnectFromHost();
-    m_socket.disconnect();
-    m_socket.deleteLater();
 
-    qDebug()<<temp;
+    QTcpSocket *m_socket=new QTcpSocket;
+
+    connect(m_socket,&QTcpSocket::disconnected,[=]{
+        qDebug()<<temp<<"Disconnected";
+        //m_socket->disconnect();
+        m_socket->deleteLater();
+        delete m_socket;
+    });
+    connect(m_socket,&QTcpSocket::connected,[=]{
+        emit connect_ok(temp);
+        qDebug()<<temp;
+    });
+
+    m_socket->connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
+    m_socket->waitForConnected(timeout);
+    m_socket->disconnectFromHost();
 
     emit try_one(-1);
 
@@ -211,7 +217,7 @@ void dispatch::run()
 
             //qDebug() <<str_ips_list.at(ii)<<":"<< ports_list.at(iii);
 
-            qDebug()<<"now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
+            //qDebug()<<"now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
 
 
             connecttry=new trytry;
@@ -222,13 +228,13 @@ void dispatch::run()
 
             connect(connecttry,&trytry::try_one,this,&dispatch::f_one);
             connect(connecttry,&trytry::connect_ok,[=](QString temp){emit connect_ok(temp);});
-
+/*
             connect(connecttry,&trytry::finished,[=]{
                 connecttry->disconnect();
                 connecttry->quit();
                 connecttry->wait();
             });
-
+*/
             connecttry->start();
 
             jindu=(quint16)(((qfloat16)(now_scan)/(qfloat16)(scantimes))*100);

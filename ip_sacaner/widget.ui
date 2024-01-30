@@ -97,25 +97,12 @@
     <string>线程</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_5">
+  <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>240</y>
-     <width>53</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>扫描结果</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>240</y>
-     <width>91</width>
+     <width>81</width>
      <height>24</height>
     </rect>
    </property>
@@ -774,6 +761,19 @@ domain.com</string>
    </property>
    <property name="text">
     <string>;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="clearoutput">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>240</y>
+     <width>71</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>clear output</string>
    </property>
   </widget>
  </widget>
