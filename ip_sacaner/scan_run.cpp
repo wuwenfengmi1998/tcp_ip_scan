@@ -26,39 +26,43 @@ quint32 ipv4str_to_int(const QString& ipstr)
     }
 }
 
-void trytry::run()
+
+
+trytry::trytry()
 {
 
-    if (ipint != 0 && ipstr != "")
-    {
-        //qDebug()<<ipstr<<":"<<ipint;
-        QTcpSocket m_socket;
-        m_socket.connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
-        if (m_socket.waitForConnected(timeout))
-        {
-            while(*outputbusy);
-            *outputbusy+=1;
-            QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
-            output_list->append(temp);
-            //qDebug() << ipstr<<":"<< ipint;
-            //msleep(1);
-            *outputbusy-=1;
-        }
-        m_socket.disconnectFromHost();
-        m_socket.disconnect();
 
-
-        //while(*barbusy);
-        //*barbusy+=1;
-
-        //str.asprintf("停止 %.3f",((0.0+*nt_bar)/(0.0+*t_bar))*100);
-        //bt->setText(QString("%1%").arg(((0.0+*nt_bar)/(0.0+*t_bar))*100));
-        //qDebug()<<*nt_bar<<"/"<<*t_bar;
-        //*barbusy-=1;
-
-        //*now_thread_num-=1;
-    }
 }
+
+void trytry::run()
+{
+    emit try_one(1);
+    QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
+
+
+    QTcpSocket *m_socket=new QTcpSocket;
+
+    connect(m_socket,&QTcpSocket::disconnected,[=]{
+        qDebug()<<temp<<"Disconnected";
+        //m_socket->disconnect();
+        m_socket->close();
+        m_socket->flush();
+        m_socket->deleteLater();
+        delete m_socket;
+    });
+    connect(m_socket,&QTcpSocket::connected,[=]{
+        emit connect_ok(temp);
+        qDebug()<<temp;
+    });
+
+    m_socket->connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
+    m_socket->waitForConnected(timeout);
+    m_socket->disconnectFromHost();
+
+    emit try_one(-1);
+
+}
+
 
 dispatch::dispatch()
 {
@@ -66,183 +70,201 @@ dispatch::dispatch()
 
 }
 
-void dispatch::tray(const QString& ipstr, quint32 ipint)
-{
-
-
-
-    //qDebug()<<"thread "<<now_thread_num<<":"<<set_thread_num;
-    while (now_thread_num> set_thread_num)
-    {
-        //qDebug()<<"while "<<now_thread_num<<":"<<set_thread_num;
-    }
-
-    try_telnet=new trytry;
-    try_telnet->ipstr = ipstr;
-    try_telnet->ipint = ipint;
-    try_telnet->timeout = timeout;
-    try_telnet->output_list = output_list;
-
-
-    try_telnet->now_thread_num = &now_thread_num;
-
-    try_telnet->t_bar=t_bar;
-    try_telnet->nt_bar=nt_bar;
-
-    try_telnet->outputbusy=&outputbusy;
-    try_telnet->barbusy=&barbusy;
-
-
-
-    //try_telnet->moveToThread(main_thread);
-
-    connect(try_telnet,&QThread::started,[=]()
-    {
-        now_thread_num+=1;
-
-        thread_start_lock=0;
-
-    });
-    connect(try_telnet,&QThread::finished,[=]()
-    {
-        now_thread_num-=1;
-
-    });
-
-    while(thread_start_lock);
-    try_telnet->start();
-    thread_start_lock=1;
-
-    *nt_bar+=1;
-    emit dispatch_one();
-}
 
 void dispatch::run()
 {
-
-
-    //qDebug()<< ui->IP_list->toPlainText();
-
-    //the_bar->setValue(20);
-
-    //QTcpSocket* m_socket = new QTcpSocket;
-
-    QStringList str_ip_list = ip_list->toPlainText().split("\n");
+    QStringList str_ip_list = ip_list.split("\n");
     QStringList str_ips_list;
+    QStringList str_list_more;
+    quint32 ipa,ipb;
+    QStringList str_port_list = port_list.split("\n");
+    QStringList str_ports_temp;
+    QStringList str_porttoport_temp;
+    quint32 porta,portb;
+    QList <quint32> ports_list;
+    quint64 ports_num=0;
+    quint64 ips_num=0;
+    QRegExp ex_ipv4     ("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
+    QRegExp ex_ipv4_more("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)-((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
+    QRegExp ex_ipv4_more2("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)/(0?[0-9]|1[0-9]|2[0-9]|3[0-2])$");
+    QRegExp ex_ipv6     ("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
+    QRegExp ex_domain   ("^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}$");
 
-    QStringList str_port_list = port_list->toPlainText().split("\n");
-    QStringList str_ports_list;
 
-
-
-    quint32 ips_num=0;
-    quint32 ports_num=0;
     for (int i = 0; i < str_ip_list.size(); ++i)
     {
-        //qDebug() << str_ip_list.at(i);
-        str_ips_list = str_ip_list.at(i).split("-");
-        if (str_ips_list.size() > 1)
+        if(ex_ipv4.exactMatch(str_ip_list.at(i)))
+        {
+            qDebug() << str_ip_list.at(i)<<" is ipv4";
+            str_ips_list.append(str_ip_list.at(i));
+            ips_num+=1;
+        }else if(ex_ipv4_more.exactMatch(str_ip_list.at(i)))
+        {
+            qDebug() << str_ip_list.at(i)<<" is ipv4_more";
+            str_list_more=str_ip_list.at(i).split("-");
+           ipa=ipv4str_to_int(str_list_more.at(0));
+           ipb=ipv4str_to_int(str_list_more.at(1));
+           if(ipa>ipb)
+           {
+                for(;ipb<=ipa;ipb++)
+                {
+                    str_ips_list.append(ipv4int_to_str(ipb));
+                    ips_num+=1;
+                }
+           }else if(ipb>ipa)
+           {
+               for(;ipa<=ipb;ipa++)
+               {
+                   str_ips_list.append(ipv4int_to_str(ipa));
+                   ips_num+=1;
+               }
+           }else//=
+           {
+               str_ips_list.append(ipv4int_to_str(ipa));
+               ips_num+=1;
+           }
+
+        }else if(ex_ipv4_more2.exactMatch(str_ip_list.at(i)))
         {
 
-            ips_num=ipv4str_to_int(str_ips_list.at(str_ips_list.size() - 1))-ipv4str_to_int(str_ips_list.at(0))+1;
+            qDebug() << str_ip_list.at(i)<<" is ipv4_more2";
+            str_list_more=str_ip_list.at(i).split("/");
+           ipa=ipv4str_to_int(str_list_more.at(0));
+           ipb=qPow(2,(32-str_list_more.at(1).toInt()));
+           for(quint32 ii=0;ii<ipb;ii++)
+           {
+               str_ips_list.append(ipv4int_to_str(ipa+ii));
+               ips_num+=1;
+           }
+
+        }else if(ex_ipv6.exactMatch(str_ip_list.at(i)))
+        {
+
+            qDebug() << str_ip_list.at(i)<<" is ipv6";
+            str_ips_list.append(str_ip_list.at(i));
+            ips_num+=1;
+        }else if(ex_domain.exactMatch(str_ip_list.at(i)))
+        {
+
+            qDebug() << str_ip_list.at(i)<<" is domain";
+            str_ips_list.append(str_ip_list.at(i));
+            ips_num+=1;
         }else
         {
-
-            ips_num+=1;
-
+            qDebug() << str_ip_list.at(i)<<" don't know what is thit";
         }
+
+
      }
 
 
-    for (quint32 ii = 0; ii < str_port_list.size(); ii++)
+    QRegExp ex_port      ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
+    QRegExp ex_porttoport("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])-(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
+    //QRegExp ex_portmore  ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]);$");
+    for (int i = 0; i < str_port_list.size(); ++i)
     {
-        str_ports_list = str_port_list.at(ii).split("-");
-        if (str_ports_list.size() > 1)
+        str_ports_temp=str_port_list.at(i).split(";");
+        for (int ii = 0; ii < str_ports_temp.size(); ++ii)
         {
-
-            ports_num=str_ports_list.at(str_ports_list.size() - 1).toInt() -str_ports_list.at(0).toInt()+1;
-        }
-        else
-        {
-
-            ports_num+=1;
-        }
-    }
-
-    *t_bar=ips_num*ports_num;
-    *nt_bar=0;
-    outputbusy=0;
-
-    \
-        //qDebug()<<*t_bar;
-//*****************************
-    for (int i = 0; i < str_ip_list.size(); ++i)
-    {
-        //qDebug() << str_ip_list.at(i);
-        str_ips_list = str_ip_list.at(i).split("-");
-        if (str_ips_list.size() > 1)
-        {
-
-            for (quint32 ips = ipv4str_to_int(str_ips_list.at(0)); ips < ipv4str_to_int(str_ips_list.at(str_ips_list.size() - 1)) + 1; ips++)
+            if(ex_port.exactMatch(str_ports_temp.at(ii)))
             {
-                //qDebug() << ipv4int_to_str(ips);
-                for (quint32 ii = 0; ii < str_port_list.size(); ii++)
-                {
-                    str_ports_list = str_port_list.at(ii).split("-");
-                    if (str_ports_list.size() > 1)
-                    {
+                qDebug()<<str_ports_temp.at(ii)<<" norlmore port";
+                ports_list.append(str_ports_temp.at(ii).toInt());
+                ports_num+=1;
 
-                        for (quint32 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
-                        {
-                            dispatch::tray(ipv4int_to_str(ips), prots);
-                        }
-                    }
-                    else
-                    {
-
-                        dispatch::tray(ipv4int_to_str(ips), str_ports_list.at(0).toInt());
-                    }
-                }
-            }
-        }
-        else
-        {
-
-            for (quint32 ii = 0; ii < str_port_list.size(); ii++)
+            }else if(ex_porttoport.exactMatch(str_ports_temp.at(ii)))
             {
-                str_ports_list = str_port_list.at(ii).split("-");
-                if (str_ports_list.size() > 1)
+                qDebug()<<str_ports_temp.at(ii)<<" port to port";
+                str_porttoport_temp=str_ports_temp.at(ii).split("-");
+                porta=str_porttoport_temp.at(0).toInt();
+                portb=str_porttoport_temp.at(1).toInt();
+                if(porta>portb)
                 {
+                     for(;portb<=porta;portb++)
+                     {
+                         ports_list.append(portb);
+                         ports_num+=1;
 
-                    for (quint32 prots = str_ports_list.at(0).toInt(); prots < str_ports_list.at(str_ports_list.size() - 1).toInt() + 1; prots++)
+                     }
+                }else if(portb>porta)
+                {
+                    for(;porta<=portb;porta++)
                     {
-                        dispatch::tray(str_ips_list.at(0), prots);
-                    }
-                }
-                else
-                {
+                         ports_list.append(porta);
+                         ports_num+=1;
 
-                    dispatch::tray(str_ips_list.at(0), str_ports_list.at(0).toInt());
+                    }
+                }else//=
+                {
+                    ports_list.append(porta);
+                    ports_num+=1;
 
                 }
             }
 
         }
 
+    }
+
+    quint64 scantimes=ips_num*ports_num,now_scan=0;
+
+   qDebug() << "IP: "<<ips_num;
+   qDebug() << "port :"<<ports_num;
+   qDebug() << "scan times :"<<scantimes;
+    quint16 jindu=0,jindu_old=0;
+    for(quint64 ii=0;ii<ips_num;ii++)
+    {
+        for(quint64 iii=0;iii<ports_num;iii++)
+        {
+
+            //qDebug() <<str_ips_list.at(ii)<<":"<< ports_list.at(iii);
+
+            //qDebug()<<"now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
 
 
-        //for (unsigned long a = str_ips_list.at(0).toInt();a< str_ip_list.size()>1? str_ips_list.at(1).toInt()+1: str_ips_list.at(0).toInt()+1;a++)
-        //{
-        //    qDebug() << a;
-        //}
+            connecttry=new trytry;
+            connecttry->timeout=this->timeout;
+            connecttry->ipstr=str_ips_list.at(ii);
+            connecttry->ipint=ports_list.at(iii);
+
+
+            connect(connecttry,&trytry::try_one,this,&dispatch::f_one);
+            connect(connecttry,&trytry::connect_ok,[=](QString temp){emit connect_ok(temp);});
+/*
+            connect(connecttry,&trytry::finished,[=]{
+                connecttry->disconnect();
+                connecttry->quit();
+                connecttry->wait();
+            });
+*/
+            connecttry->start();
+
+            jindu=(quint16)(((qfloat16)(now_scan)/(qfloat16)(scantimes))*100);
+            if(jindu!=jindu_old)
+            {
+                jindu_old=jindu;
+                //qDebug() <<jindu;
+
+                emit return_jindu(jindu);
+            }
+
+            now_scan+=1;
+
+            while(this->now_thread_num>this->set_thread_num);
+
+        }
+
 
     }
 
-    //sleep(1);
-    while(now_thread_num);
+
+
+
     emit dispatch_finish();
 }
 
+void dispatch::f_one(qint16 temp)
+{
+    this->now_thread_num+=temp;
 
-
-
+}

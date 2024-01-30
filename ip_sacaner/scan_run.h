@@ -9,26 +9,22 @@
 #include <QTcpSocket>  //socket
 #include <QLabel>
 #include <QPlainTextEdit>
-
-
+#include <qmath.h>
+#include <QFloat16>
 
 class trytry : public QThread
 {
+    Q_OBJECT
 public:
+    trytry();
 
-    quint16 *outputbusy;
-    quint16 *barbusy;
     quint16 timeout;
     QString ipstr;
     quint32 ipint;
-    int *now_thread_num;
-    QTextEdit* output_list;
-
-    quint64 *t_bar;
-    quint64 *nt_bar;
-
     void run();
-
+signals:
+    void try_one(qint16);
+    void connect_ok(QString);
 
 };
 
@@ -39,27 +35,24 @@ public:
 
     dispatch();
 
-    int set_thread_num;
-    int now_thread_num;
-    int thread_start_lock=0;
+    qint16 set_thread_num;
+    qint16 now_thread_num;
+    quint16 thread_start_lock=0;
     quint16 timeout;
-    quint64 *t_bar;
-    quint64 *nt_bar;
-    quint16 outputbusy=0;
-    quint16 barbusy=0;
-    //QThread* main_thread;
-    QPlainTextEdit* ip_list;
-    QPlainTextEdit* port_list;
-    QTextEdit* output_list;
 
-    trytry* try_telnet;
+    QString ip_list;
+    QString port_list;
 
-    void tray(const QString& ipstr, quint32 ipint);
+    trytry *connecttry;
+
+
     void run();
-
+    void f_one(qint16 temp);
 signals:
     void dispatch_finish();
     void dispatch_one();
+    void return_jindu(quint16);
+    void connect_ok(QString);
 };
 
 

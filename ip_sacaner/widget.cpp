@@ -3,14 +3,66 @@
 
 
 
-
-
-
-
-
-void Widget::auto_edit()
+void Widget::keyboard_en(bool a)
 {
-    //qDebug("%d",rand());
+    ui->pushButton_2->setDisabled(a);
+    ui->pushButton_3->setDisabled(a);
+    ui->pushButton_4->setDisabled(a);
+    ui->pushButton_5->setDisabled(a);
+    ui->pushButton_6->setDisabled(a);
+    ui->pushButton_7->setDisabled(a);
+    ui->pushButton_8->setDisabled(a);
+    ui->pushButton_9->setDisabled(a);
+    ui->pushButton_10->setDisabled(a);
+    ui->pushButton_11->setDisabled(a);
+    ui->pushButton_12->setDisabled(a);
+    ui->pushButton_13->setDisabled(a);
+    ui->pushButton_14->setDisabled(a);
+    ui->pushButton_15->setDisabled(a);
+    ui->pushButton_16->setDisabled(a);
+    ui->pushButton_17->setDisabled(a);
+    ui->pushButton_18->setDisabled(a);
+    ui->pushButton_19->setDisabled(a);
+    ui->pushButton_20->setDisabled(a);
+    ui->pushButton_21->setDisabled(a);
+    ui->pushButton_22->setDisabled(a);
+    ui->pushButton_23->setDisabled(a);
+    ui->pushButton_24->setDisabled(a);
+    ui->pushButton_25->setDisabled(a);
+    ui->pushButton_26->setDisabled(a);
+    ui->pushButton_27->setDisabled(a);
+    ui->pushButton_28->setDisabled(a);
+    ui->pushButton_29->setDisabled(a);
+    ui->pushButton_30->setDisabled(a);
+    ui->pushButton_31->setDisabled(a);
+    ui->pushButton_32->setDisabled(a);
+    ui->pushButton_33->setDisabled(a);
+    ui->pushButton_34->setDisabled(a);
+    ui->pushButton_35->setDisabled(a);
+    ui->pushButton_36->setDisabled(a);
+    ui->pushButton_37->setDisabled(a);
+    ui->pushButton_38->setDisabled(a);
+    ui->pushButton_39->setDisabled(a);
+    ui->pushButton_40->setDisabled(a);
+    ui->pushButton_41->setDisabled(a);
+    ui->pushButton_42->setDisabled(a);
+    ui->pushButton_43->setDisabled(a);
+    ui->pushButton_44->setDisabled(a);
+
+
+
+}
+
+void Widget::output_chuli(QString temp)
+{
+    ui->outputlist->append(temp);
+}
+
+
+void Widget::jindu_chuli(quint16 temp)
+{
+    //qDebug()<<temp;
+    ui->progressBar->setValue(temp);
 }
 
 
@@ -20,81 +72,310 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-     //qDebug("hello world");
-    
+    ui->outputlist->setReadOnly(true);
+    ui->stard_scan->setText("start scan");
 
+    connect(this,&Widget::start_scan,[=]{
+        scan_flag=1;
+        keyboard_en(true);
+        ui->IP_list->setReadOnly(true);
+        ui->port_list->setReadOnly(true);
+        ui->timeout->setReadOnly(true);
+        ui->threads->setReadOnly(true);
+        ui->stard_scan->setText("stop scan");
+        dispatch_thread = new dispatch;//线程分发
+        dispatch_thread->ip_list=ui->IP_list->toPlainText();
+        dispatch_thread->port_list=ui->port_list->toPlainText();
+        dispatch_thread->set_thread_num = ui->threads->value();
+        dispatch_thread->now_thread_num = 0;
+        dispatch_thread->timeout = ui->timeout->value();
+        connect(dispatch_thread,&dispatch::dispatch_finish,[=]{
+           emit stop_scan();
+        });
+        connect(dispatch_thread,&dispatch::return_jindu,this,&Widget::jindu_chuli,Qt::QueuedConnection);
+        connect(dispatch_thread,&dispatch::connect_ok,this,&Widget::output_chuli,Qt::QueuedConnection);
+        ui->progressBar->setValue(0);
+        dispatch_thread->start();
+        ui->stard_scan->setDisabled(false);
+    });
 
+    connect(this,&Widget::stop_scan,[=]{
+        scan_flag=0;
+        keyboard_en(false);
+        ui->IP_list->setReadOnly(false);
+        ui->port_list->setReadOnly(false);
+        ui->timeout->setReadOnly(false);
+        ui->threads->setReadOnly(false);
+        ui->stard_scan->setText("start scan");
 
-    //main_thread = new QThread(this);
-    //main_thread->start();
-    connect(ui->stard_scan, &QPushButton::pressed, [=]() 
-        {
+        //dispatch_thread->disconnect();
+        dispatch_thread->quit();
+        dispatch_thread->wait();
+        //delete dispatch_thread;
+        ui->stard_scan->setDisabled(false);
+        qDebug() << "tray_exit";
 
+    });
 
+    connect(ui->stard_scan, &QPushButton::pressed, [=]()
+    {
+        ui->stard_scan->setDisabled(true);
         if(scan_flag==0)
         {
-            scan_flag=1;
-
-            ui->IP_list->setReadOnly(true);
-            ui->port_list->setReadOnly(true);
-            ui->timeout->setReadOnly(true);
-            ui->threads->setReadOnly(true);
-            ui->stard_scan->setText("停止");
-
-
-            //dispatch* dispatch_thread;
-            dispatch_thread = new dispatch;
-
-            dispatch_thread->ip_list = ui->IP_list;
-            dispatch_thread->port_list = ui->port_list;
-            dispatch_thread->output_list = ui->outputlist;
-
-
-            dispatch_thread->set_thread_num = ui->threads->value();
-            dispatch_thread->now_thread_num = 0;
-            dispatch_thread->timeout = ui->timeout->value();
-
-            dispatch_thread->nt_bar=&nt_bar;
-            dispatch_thread->t_bar=&t_bar;
-
-            //dispatch_thread->main_thread = main_thread;
-            //dispatch_thread->moveToThread(main_thread);
-            connect(dispatch_thread, &dispatch::dispatch_one, [=]()
-                {
-                    //qDebug()<<100*nt_bar/t_bar;
-                    //ui->t_bar->setValue(100*nt_bar/t_bar);
-                    ui->stard_scan->setText(QString("停止 %1%").arg(100*nt_bar/t_bar));
-
-                });
-            connect(dispatch_thread, &dispatch::finished, [=]()
-                {
-                    qDebug() << "dispatch_finish";
-                    ui->IP_list->setReadOnly(false);
-                    ui->port_list->setReadOnly(false);
-                    ui->timeout->setReadOnly(false);
-                    ui->threads->setReadOnly(false);
-                    ui->stard_scan->setText("开始扫描");
-                    scan_flag=0;
-
-                    disconnect(dispatch_thread);
-                    //delete dispatch_thread;
-                });
-            dispatch_thread->start();
+            emit start_scan();
         }else
         {
-            qDebug() << "tray_exit";
             dispatch_thread->terminate();
+           emit stop_scan();
 
         }
 
         });//'scan button pass'
 
 
+    connect(ui->pushButton_2, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_2->text());
+     });
+    connect(ui->pushButton_3, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_3->text());
+     });
+    connect(ui->pushButton_4, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_4->text());
+     });
+    connect(ui->pushButton_5, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_5->text());
+     });
+    connect(ui->pushButton_6, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText("\n");
+     });
+    connect(ui->pushButton_7, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_7->text());
+     });
+    connect(ui->pushButton_8, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_8->text());
+     });
+    connect(ui->pushButton_9, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_9->text());
+     });
+    connect(ui->pushButton_10, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_10->text());
+     });
+    connect(ui->pushButton_11, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_11->text());
+     });
+    connect(ui->pushButton_12, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_12->text());
+     });
+    connect(ui->pushButton_13, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_13->text());
+     });
+    connect(ui->pushButton_14, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_14->text());
+     });
+    connect(ui->pushButton_15, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_15->text());
+     });
+    connect(ui->pushButton_16, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_16->text());
+     });
+    connect(ui->pushButton_17, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_17->text());
+     });
+    connect(ui->pushButton_18, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_18->text());
+     });
+    connect(ui->pushButton_19, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->insertPlainText(ui->pushButton_19->text());
+     });
+    connect(ui->pushButton_21, &QPushButton::pressed, [=]()
+    {
+
+        ui->IP_list->clear();
+     });
 
 
-    //connect(ui->IP_list,&QTextEdit::textChanged,this, &Widget::auto_edit);
+    connect(ui->pushButton_22, &QPushButton::pressed, [=]()
+    {
 
-  
+        ui->port_list->appendPlainText(ui->pushButton_22->text());
+
+     });
+    connect(ui->pushButton_23, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->appendPlainText(ui->pushButton_23->text());
+
+     });
+    connect(ui->pushButton_24, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->appendPlainText(ui->pushButton_24->text());
+
+     });
+    connect(ui->pushButton_25, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->appendPlainText(ui->pushButton_25->text());
+
+     });
+    connect(ui->pushButton_26, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->appendPlainText(ui->pushButton_26->text());
+
+     });
+    connect(ui->pushButton_27, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->appendPlainText(ui->pushButton_27->text());
+
+     });
+    connect(ui->pushButton_28, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->appendPlainText(ui->pushButton_28->text());
+
+     });
+    connect(ui->pushButton_29, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->appendPlainText(ui->pushButton_29->text());
+
+     });
+    connect(ui->pushButton_30, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->appendPlainText(ui->pushButton_30->text());
+
+     });
+
+    connect(ui->pushButton_31, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_31->text());
+
+     });
+    connect(ui->pushButton_32, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_32->text());
+
+     });
+    connect(ui->pushButton_33, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_33->text());
+
+     });
+    connect(ui->pushButton_34, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_34->text());
+
+     });
+    connect(ui->pushButton_35, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_35->text());
+
+     });
+    connect(ui->pushButton_36, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_36->text());
+
+     });
+    connect(ui->pushButton_37, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_37->text());
+
+     });
+    connect(ui->pushButton_38, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_38->text());
+
+     });
+    connect(ui->pushButton_39, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_39->text());
+
+     });
+    connect(ui->pushButton_40, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText("\n");
+
+     });
+    connect(ui->pushButton_41, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_41->text());
+
+     });
+    connect(ui->pushButton_42, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_42->text());
+
+     });
+    connect(ui->pushButton_43, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->clear();
+
+     });
+    connect(ui->pushButton_44, &QPushButton::pressed, [=]()
+    {
+
+        ui->port_list->insertPlainText(ui->pushButton_44->text());
+
+     });
+
+    connect(ui->clearoutput, &QPushButton::pressed, [=]()
+    {
+
+        ui->outputlist->clear();
+
+     });
 }
 
 Widget::~Widget()
