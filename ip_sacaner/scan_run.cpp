@@ -26,6 +26,17 @@ quint32 ipv4str_to_int(const QString& ipstr)
     }
 }
 
+bool Ping(QString strPingIP)
+{
+    QProcess pingProcess;
+    QString strArg = "ping " + strPingIP + " -n 1 -i 2";
+    pingProcess.start(strArg, QIODevice::ReadOnly);
+    pingProcess.waitForFinished(-1);
+    QString p_stdout = QString::fromLocal8Bit(pingProcess.readAllStandardOutput());
+    return p_stdout.contains("TTL=");
+}
+
+
 trytryping::trytryping()
 {
 
@@ -34,27 +45,14 @@ trytryping::trytryping()
 void trytryping::run()
 {
     emit try_one(1);
-    qint16 exitCode=0;
+
     QString ip=this->ipstr;
-    #ifdef Q_OS_WIN
-            QString strArg = "ping " + ip + " -n 1 -i 2";
-            exitCode = QProcess::execute(strArg);
-     #else
-            //其他平台(Linux或Mac)
-            exitCode = QProcess::execute("ping",  QStringList() << "-c 1" << "-t 2" << ip));
-     #endif
-    if(0 == exitCode)
+
+    if(Ping(ip))
     {
-        //it's alive
-        //qDebug() << "shell ping " + ip + " sucessed!";
         emit connect_ok(QString("Ping ").append(ip));
-        //发射该IP在线的信号
-
-    } else {
-        //qDebug() << "shell ping " + ip + " failed!";
-        //发射IP离线的信号
-
     }
+
 
     emit try_one(-1);
 }
