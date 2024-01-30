@@ -36,11 +36,22 @@ trytry::trytry()
 
 void trytry::run()
 {
+    emit try_one(1);
+    QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
 
+    QTcpSocket m_socket;
+    m_socket.connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
+    if (m_socket.waitForConnected(timeout))
+    {
+        emit connect_ok(temp);
+    }
+    m_socket.disconnectFromHost();
+    m_socket.disconnect();
+    m_socket.deleteLater();
 
-    qDebug()<<this->ipstr<<":"<<this->ipint;
-    sleep(1);
+    qDebug()<<temp;
 
+    emit try_one(-1);
 
 }
 
@@ -202,14 +213,21 @@ void dispatch::run()
 
             qDebug()<<"now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
 
-            while(this->now_thread_num>this->set_thread_num);
+
             connecttry=new trytry;
             connecttry->timeout=this->timeout;
             connecttry->ipstr=str_ips_list.at(ii);
             connecttry->ipint=ports_list.at(iii);
-            this->now_thread_num+=1;
-            //connect(connecttry,&trytry::started,[=]{this->now_thread_num+=1;});
-            connect(connecttry,&trytry::finished,[=]{this->now_thread_num-=1;});
+
+
+            connect(connecttry,&trytry::try_one,this,&dispatch::f_one);
+            connect(connecttry,&trytry::connect_ok,[=](QString temp){emit connect_ok(temp);});
+
+            connect(connecttry,&trytry::finished,[=]{
+                connecttry->disconnect();
+                connecttry->quit();
+                connecttry->wait();
+            });
 
             connecttry->start();
 
@@ -224,6 +242,8 @@ void dispatch::run()
 
             now_scan+=1;
 
+            while(this->now_thread_num>this->set_thread_num);
+
         }
 
 
@@ -235,4 +255,8 @@ void dispatch::run()
     emit dispatch_finish();
 }
 
+void dispatch::f_one(qint16 temp)
+{
+    this->now_thread_num+=temp;
 
+}

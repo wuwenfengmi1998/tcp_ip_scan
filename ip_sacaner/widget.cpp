@@ -5,7 +5,10 @@
 
 
 
-
+void Widget::output_chuli(QString temp)
+{
+    ui->outputlist->append(temp);
+}
 
 
 void Widget::jindu_chuli(quint16 temp)
@@ -40,8 +43,8 @@ Widget::Widget(QWidget *parent)
         connect(dispatch_thread,&dispatch::dispatch_finish,[=]{
            emit stop_scan();
         });
-        connect(dispatch_thread,&dispatch::return_jindu,this,&Widget::jindu_chuli);
-
+        connect(dispatch_thread,&dispatch::return_jindu,this,&Widget::jindu_chuli,Qt::QueuedConnection);
+        connect(dispatch_thread,&dispatch::connect_ok,this,&Widget::output_chuli,Qt::QueuedConnection);
         ui->progressBar->setValue(0);
         dispatch_thread->start();
         ui->stard_scan->setDisabled(false);

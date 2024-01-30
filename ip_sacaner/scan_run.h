@@ -22,7 +22,9 @@ public:
     QString ipstr;
     quint32 ipint;
     void run();
-
+signals:
+    void try_one(qint16);
+    void connect_ok(QString);
 
 };
 
@@ -33,8 +35,8 @@ public:
 
     dispatch();
 
-    quint16 set_thread_num;
-    quint16 now_thread_num;
+    qint16 set_thread_num;
+    qint16 now_thread_num;
     quint16 thread_start_lock=0;
     quint16 timeout;
 
@@ -45,11 +47,12 @@ public:
 
 
     void run();
-
+    void f_one(qint16 temp);
 signals:
     void dispatch_finish();
     void dispatch_one();
     void return_jindu(quint16);
+    void connect_ok(QString);
 };
 
 
