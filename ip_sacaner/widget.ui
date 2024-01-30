@@ -97,7 +97,7 @@
     <string>线程</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="saveoutputbutton">
    <property name="geometry">
     <rect>
      <x>10</x>

@@ -9,7 +9,8 @@
 
 #include "scan_run.h"
 #include <QThread>
-
+#include <QFileDialog>
+#include <QDateTime>
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE

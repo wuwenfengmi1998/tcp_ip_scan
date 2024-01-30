@@ -160,6 +160,20 @@ Widget::Widget(QWidget *parent)
 
         });//'scan button pass'
 
+    connect(ui->saveoutputbutton, &QPushButton::pressed, [=]()
+    {
+        QString fileName = QFileDialog::getSaveFileName(this, tr("保存文件"), QDir::homePath().append("/iplist-").append(QDateTime::currentDateTime().toString("yyyyMMddhhmmss")), tr("文本文件 (*.txt);;所有文件 (*.*)"));
+
+        if (!fileName.isEmpty()) {
+            QFile file(fileName);
+            if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                QTextStream out(&file);
+                out << ui->outputlist->toPlainText() << endl;
+                file.close();
+            }
+        }
+
+     });
 
     connect(ui->pushButton_2, &QPushButton::pressed, [=]()
     {
