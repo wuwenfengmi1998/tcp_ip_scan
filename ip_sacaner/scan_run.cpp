@@ -45,6 +45,7 @@ void trytry::run()
     connect(m_socket,&QTcpSocket::disconnected,[=]{
         qDebug()<<temp<<"Disconnected";
         //m_socket->disconnect();
+        m_socket->close();
         m_socket->deleteLater();
         delete m_socket;
     });
