@@ -87,7 +87,7 @@ Widget::Widget(QWidget *parent)
             scan_flag=1;
             keyboard_en(true);
             ui->stard_scan->setDisabled(true);
-            ui->pushButton_20->setText("Stop Ping");
+            ui->pushButton_20->setText("停止Ping");
             dispatch_thread = new dispatch;//线程分发
             dispatch_thread->pingonly=true;
             dispatch_thread->ip_list=ui->IP_list->toPlainText();
@@ -99,7 +99,7 @@ Widget::Widget(QWidget *parent)
                 scan_flag=0;
                 keyboard_en(false);
                 ui->stard_scan->setDisabled(false);
-                ui->pushButton_20->setText("Ping Olny");
+                ui->pushButton_20->setText("仅Ping");
                 dispatch_thread->quit();
                 //dispatch_thread->wait();
             });
@@ -112,7 +112,7 @@ Widget::Widget(QWidget *parent)
             scan_flag=0;
             keyboard_en(false);
             ui->stard_scan->setDisabled(false);
-            ui->pushButton_20->setText("Ping Olny");
+            ui->pushButton_20->setText("仅Ping");
             dispatch_thread->terminate();
             dispatch_thread->quit();
             //dispatch_thread->wait();
@@ -127,7 +127,7 @@ Widget::Widget(QWidget *parent)
             scan_flag=1;
             keyboard_en(true);
             ui->pushButton_20->setDisabled(true);
-            ui->stard_scan->setText("stop scan");
+            ui->stard_scan->setText("停止扫描");
             dispatch_thread = new dispatch;//线程分发
             dispatch_thread->pingonly=false;
             dispatch_thread->ip_list=ui->IP_list->toPlainText();
@@ -139,7 +139,7 @@ Widget::Widget(QWidget *parent)
                 scan_flag=0;
                 keyboard_en(false);
                 ui->pushButton_20->setDisabled(false);
-                ui->stard_scan->setText("start scan");
+                ui->stard_scan->setText("开始扫描");
                 dispatch_thread->quit();
                 //dispatch_thread->wait();
             });
@@ -152,7 +152,7 @@ Widget::Widget(QWidget *parent)
             scan_flag=0;
             keyboard_en(false);
             ui->pushButton_20->setDisabled(false);
-            ui->stard_scan->setText("start scan");
+            ui->stard_scan->setText("开始扫描");
             dispatch_thread->terminate();
             dispatch_thread->quit();
             //dispatch_thread->wait();
