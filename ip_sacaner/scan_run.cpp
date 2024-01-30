@@ -44,17 +44,17 @@ trytryping::trytryping()
 
 void trytryping::run()
 {
-    emit try_one(1);
+    //emit try_one(1);
 
     QString ip=this->ipstr;
 
     if(Ping(ip))
     {
-        emit connect_ok(QString("Ping ").append(ip));
+        emit connect_ok(ip);
     }
 
 
-    emit try_one(-1);
+    //emit try_one(-1);
 }
 
 
@@ -66,7 +66,7 @@ trytry::trytry()
 
 void trytry::run()
 {
-    emit try_one(1);
+    //emit try_one(1);
     QString temp = QString("%1:%2").arg(ipstr).arg(ipint);
 
 
@@ -76,6 +76,7 @@ void trytry::run()
     m_socket->connectToHost(ipstr, ipint, QTcpSocket::ReadWrite);
     if(m_socket->waitForConnected(timeout))
     {
+        m_socket->disconnectFromHost();
         emit connect_ok(temp);
         qDebug()<<temp;
     }else
@@ -83,13 +84,12 @@ void trytry::run()
 
     }
 
-    m_socket->disconnectFromHost();
-    m_socket->close();
     m_socket->flush();
-    m_socket->deleteLater();
+    m_socket->close();
 
+    //m_socket->deleteLater();
     delete m_socket;
-    emit try_one(-1);
+    //emit try_one(-1);
 
 }
 
@@ -186,7 +186,7 @@ void dispatch::run()
 
 
      }
-    quint16 jindu=0,jindu_old=0;
+    quint64 jindu=0,jindu_old=0;
 
     if(pingonly)
     {
@@ -198,11 +198,13 @@ void dispatch::run()
 
 
 
-            connect(trytry_ping,&trytryping::try_one,this,&dispatch::f_one);
+            //connect(trytry_ping,&trytryping::try_one,this,&dispatch::f_one);
+            connect(trytry_ping,&trytry::started,[=]{this->now_thread_num+=1;});
+            connect(trytry_ping,&trytry::finished,[=]{this->now_thread_num-=1;});
             connect(trytry_ping,&trytryping::connect_ok,[=](QString temp){emit connect_ok(temp);});
             trytry_ping->start();
 
-            jindu=(quint16)(((qfloat16)(ii)/(qfloat16)(ips_num))*100);
+            jindu=(quint64)(((qreal)(ii)/(qreal)(ips_num))*100);
             if(jindu!=jindu_old)
             {
                 jindu_old=jindu;
@@ -286,11 +288,13 @@ void dispatch::run()
                 connecttry->ipint=ports_list.at(iii);
 
 
-                connect(connecttry,&trytry::try_one,this,&dispatch::f_one);
+                //connect(connecttry,&trytry::try_one,this,&dispatch::f_one);
+                connect(connecttry,&trytry::started,[=]{this->now_thread_num+=1;});
+                connect(connecttry,&trytry::finished,[=]{this->now_thread_num-=1;});
                 connect(connecttry,&trytry::connect_ok,[=](QString temp){emit connect_ok(temp);});
                 connecttry->start();
 
-                jindu=(quint16)(((qfloat16)(now_scan)/(qfloat16)(scantimes))*100);
+                jindu=(quint64)(((qreal)(now_scan)/(qreal)(scantimes))*100);
                 if(jindu!=jindu_old)
                 {
                     jindu_old=jindu;
@@ -319,6 +323,6 @@ void dispatch::run()
 
 void dispatch::f_one(qint16 temp)
 {
-    this->now_thread_num+=temp;
+    //this->now_thread_num+=temp;
 
 }
