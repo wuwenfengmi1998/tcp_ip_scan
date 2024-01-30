@@ -26,6 +26,38 @@ quint32 ipv4str_to_int(const QString& ipstr)
     }
 }
 
+trytryping::trytryping()
+{
+
+}
+
+void trytryping::run()
+{
+    emit try_one(1);
+    qint16 exitCode;
+    QString ip=this->ipstr;
+    #ifdef Q_OS_WIN
+            QString strArg = "ping " + ip + " -n 1 -i 2";
+            exitCode = QProcess::execute(strArg);
+     #else
+            //其他平台(Linux或Mac)
+            exitCode = QProcess::execute("ping",  QStringList() << "-c 1" << "-t 2" << ip));
+     #endif
+    if(0 == exitCode)
+    {
+        //it's alive
+        qDebug() << "shell ping " + ip + " sucessed!";
+        emit connect_ok(this->ipstr);
+        //发射该IP在线的信号
+
+    } else {
+        qDebug() << "shell ping " + ip + " failed!";
+        //发射IP离线的信号
+
+    }
+
+    emit try_one(-1);
+}
 
 
 trytry::trytry()
@@ -156,90 +188,23 @@ void dispatch::run()
 
 
      }
-
-
-    QRegExp ex_port      ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
-    QRegExp ex_porttoport("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])-(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
-    //QRegExp ex_portmore  ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]);$");
-    for (int i = 0; i < str_port_list.size(); ++i)
-    {
-        str_ports_temp=str_port_list.at(i).split(";");
-        for (int ii = 0; ii < str_ports_temp.size(); ++ii)
-        {
-            if(ex_port.exactMatch(str_ports_temp.at(ii)))
-            {
-                qDebug()<<str_ports_temp.at(ii)<<" norlmore port";
-                ports_list.append(str_ports_temp.at(ii).toInt());
-                ports_num+=1;
-
-            }else if(ex_porttoport.exactMatch(str_ports_temp.at(ii)))
-            {
-                qDebug()<<str_ports_temp.at(ii)<<" port to port";
-                str_porttoport_temp=str_ports_temp.at(ii).split("-");
-                porta=str_porttoport_temp.at(0).toInt();
-                portb=str_porttoport_temp.at(1).toInt();
-                if(porta>portb)
-                {
-                     for(;portb<=porta;portb++)
-                     {
-                         ports_list.append(portb);
-                         ports_num+=1;
-
-                     }
-                }else if(portb>porta)
-                {
-                    for(;porta<=portb;porta++)
-                    {
-                         ports_list.append(porta);
-                         ports_num+=1;
-
-                    }
-                }else//=
-                {
-                    ports_list.append(porta);
-                    ports_num+=1;
-
-                }
-            }
-
-        }
-
-    }
-
-    quint64 scantimes=ips_num*ports_num,now_scan=0;
-
-   qDebug() << "IP: "<<ips_num;
-   qDebug() << "port :"<<ports_num;
-   qDebug() << "scan times :"<<scantimes;
     quint16 jindu=0,jindu_old=0;
-    for(quint64 ii=0;ii<ips_num;ii++)
+
+    if(pingonly)
     {
-        for(quint64 iii=0;iii<ports_num;iii++)
+        for(quint64 ii=0;ii<ips_num;ii++)
         {
-
-            //qDebug() <<str_ips_list.at(ii)<<":"<< ports_list.at(iii);
-
-            //qDebug()<<"now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
-
-
-            connecttry=new trytry;
-            connecttry->timeout=this->timeout;
-            connecttry->ipstr=str_ips_list.at(ii);
-            connecttry->ipint=ports_list.at(iii);
+            trytry_ping=new trytryping;
+            trytry_ping->timeout=this->timeout;
+            trytry_ping->ipstr=str_ips_list.at(ii);
 
 
-            connect(connecttry,&trytry::try_one,this,&dispatch::f_one);
-            connect(connecttry,&trytry::connect_ok,[=](QString temp){emit connect_ok(temp);});
-/*
-            connect(connecttry,&trytry::finished,[=]{
-                connecttry->disconnect();
-                connecttry->quit();
-                connecttry->wait();
-            });
-*/
-            connecttry->start();
 
-            jindu=(quint16)(((qfloat16)(now_scan)/(qfloat16)(scantimes))*100);
+            connect(trytry_ping,&trytryping::try_one,this,&dispatch::f_one);
+            connect(trytry_ping,&trytryping::connect_ok,[=](QString temp){emit connect_ok(temp);});
+            trytry_ping->start();
+
+            jindu=(quint16)(((qfloat16)(ii)/(qfloat16)(ips_num))*100);
             if(jindu!=jindu_old)
             {
                 jindu_old=jindu;
@@ -248,14 +213,105 @@ void dispatch::run()
                 emit return_jindu(jindu);
             }
 
-            now_scan+=1;
 
             while(this->now_thread_num>this->set_thread_num);
+        }
+    }else
+    {
+        QRegExp ex_port      ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
+        QRegExp ex_porttoport("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])-(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
+        //QRegExp ex_portmore  ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]);$");
+        for (int i = 0; i < str_port_list.size(); ++i)
+        {
+            str_ports_temp=str_port_list.at(i).split(";");
+            for (int ii = 0; ii < str_ports_temp.size(); ++ii)
+            {
+                if(ex_port.exactMatch(str_ports_temp.at(ii)))
+                {
+                    qDebug()<<str_ports_temp.at(ii)<<" norlmore port";
+                    ports_list.append(str_ports_temp.at(ii).toInt());
+                    ports_num+=1;
+
+                }else if(ex_porttoport.exactMatch(str_ports_temp.at(ii)))
+                {
+                    qDebug()<<str_ports_temp.at(ii)<<" port to port";
+                    str_porttoport_temp=str_ports_temp.at(ii).split("-");
+                    porta=str_porttoport_temp.at(0).toInt();
+                    portb=str_porttoport_temp.at(1).toInt();
+                    if(porta>portb)
+                    {
+                         for(;portb<=porta;portb++)
+                         {
+                             ports_list.append(portb);
+                             ports_num+=1;
+
+                         }
+                    }else if(portb>porta)
+                    {
+                        for(;porta<=portb;porta++)
+                        {
+                             ports_list.append(porta);
+                             ports_num+=1;
+
+                        }
+                    }else//=
+                    {
+                        ports_list.append(porta);
+                        ports_num+=1;
+
+                    }
+                }
+
+            }
 
         }
 
+        quint64 scantimes=ips_num*ports_num,now_scan=0;
 
+       qDebug() << "IP: "<<ips_num;
+       qDebug() << "port :"<<ports_num;
+       qDebug() << "scan times :"<<scantimes;
+
+        for(quint64 ii=0;ii<ips_num;ii++)
+        {
+            for(quint64 iii=0;iii<ports_num;iii++)
+            {
+
+                //qDebug() <<str_ips_list.at(ii)<<":"<< ports_list.at(iii);
+
+                //qDebug()<<"now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
+
+
+                connecttry=new trytry;
+                connecttry->timeout=this->timeout;
+                connecttry->ipstr=str_ips_list.at(ii);
+                connecttry->ipint=ports_list.at(iii);
+
+
+                connect(connecttry,&trytry::try_one,this,&dispatch::f_one);
+                connect(connecttry,&trytry::connect_ok,[=](QString temp){emit connect_ok(temp);});
+                connecttry->start();
+
+                jindu=(quint16)(((qfloat16)(now_scan)/(qfloat16)(scantimes))*100);
+                if(jindu!=jindu_old)
+                {
+                    jindu_old=jindu;
+                    //qDebug() <<jindu;
+
+                    emit return_jindu(jindu);
+                }
+
+                now_scan+=1;
+
+                while(this->now_thread_num>this->set_thread_num);
+
+            }
+
+
+        }
     }
+
+
 
 
 

@@ -11,6 +11,22 @@
 #include <QPlainTextEdit>
 #include <qmath.h>
 #include <QFloat16>
+#include <QtCore/QProcess>
+class trytryping : public QThread
+{
+    Q_OBJECT
+public:
+    trytryping();
+
+    quint16 timeout;
+    QString ipstr;
+
+    void run();
+signals:
+    void try_one(qint16);
+    void connect_ok(QString);
+
+};
 
 class trytry : public QThread
 {
@@ -44,8 +60,9 @@ public:
     QString port_list;
 
     trytry *connecttry;
+    trytryping *trytry_ping;
 
-
+    bool pingonly=false;
     void run();
     void f_one(qint16 temp);
 signals:

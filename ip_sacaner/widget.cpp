@@ -78,59 +78,84 @@ Widget::Widget(QWidget *parent)
     ui->outputlist->setReadOnly(true);
     ui->stard_scan->setText("start scan");
 
-    connect(this,&Widget::start_scan,[=]{
-        scan_flag=1;
-        keyboard_en(true);
 
-        ui->stard_scan->setText("stop scan");
-        dispatch_thread = new dispatch;//线程分发
-        dispatch_thread->ip_list=ui->IP_list->toPlainText();
-        dispatch_thread->port_list=ui->port_list->toPlainText();
-        dispatch_thread->set_thread_num = ui->threads->value();
-        dispatch_thread->now_thread_num = 0;
-        dispatch_thread->timeout = ui->timeout->value();
-        connect(dispatch_thread,&dispatch::dispatch_finish,[=]{
-           emit stop_scan();
-        });
-        connect(dispatch_thread,&dispatch::return_jindu,this,&Widget::jindu_chuli,Qt::QueuedConnection);
-        connect(dispatch_thread,&dispatch::connect_ok,this,&Widget::output_chuli,Qt::QueuedConnection);
-        ui->progressBar->setValue(0);
-        dispatch_thread->start();
-        ui->stard_scan->setDisabled(false);
-    });
-
-    connect(this,&Widget::stop_scan,[=]{
-        scan_flag=0;
-        keyboard_en(false);
-
-        ui->stard_scan->setText("start scan");
-
-        //dispatch_thread->disconnect();
-        dispatch_thread->quit();
-        dispatch_thread->wait();
-        //delete dispatch_thread;
-        ui->stard_scan->setDisabled(false);
-        qDebug() << "tray_exit";
-
-    });
 
     connect(ui->pushButton_20, &QPushButton::pressed, [=]()
     {
-
+        if(scan_flag==0)
+        {
+            scan_flag=1;
+            keyboard_en(true);
+            ui->stard_scan->setDisabled(true);
+            ui->pushButton_20->setText("Stop Ping");
+            dispatch_thread = new dispatch;//线程分发
+            dispatch_thread->pingonly=true;
+            dispatch_thread->ip_list=ui->IP_list->toPlainText();
+            dispatch_thread->port_list=ui->port_list->toPlainText();
+            dispatch_thread->set_thread_num = ui->threads->value();
+            dispatch_thread->now_thread_num = 0;
+            dispatch_thread->timeout = ui->timeout->value();
+            connect(dispatch_thread,&dispatch::dispatch_finish,[=]{
+                scan_flag=0;
+                keyboard_en(false);
+                ui->stard_scan->setDisabled(false);
+                ui->pushButton_20->setText("Ping Olny");
+                dispatch_thread->quit();
+                //dispatch_thread->wait();
+            });
+            connect(dispatch_thread,&dispatch::return_jindu,this,&Widget::jindu_chuli,Qt::QueuedConnection);
+            connect(dispatch_thread,&dispatch::connect_ok,this,&Widget::output_chuli,Qt::QueuedConnection);
+            ui->progressBar->setValue(0);
+            dispatch_thread->start();
+        }else
+        {
+            scan_flag=0;
+            keyboard_en(false);
+            ui->stard_scan->setDisabled(false);
+            ui->pushButton_20->setText("Ping Olny");
+            dispatch_thread->terminate();
+            dispatch_thread->quit();
+            //dispatch_thread->wait();
+        }
 
      });
 
     connect(ui->stard_scan, &QPushButton::pressed, [=]()
     {
-        ui->stard_scan->setDisabled(true);
         if(scan_flag==0)
         {
-            emit start_scan();
+            scan_flag=1;
+            keyboard_en(true);
+            ui->pushButton_20->setDisabled(true);
+            ui->stard_scan->setText("stop scan");
+            dispatch_thread = new dispatch;//线程分发
+            dispatch_thread->pingonly=false;
+            dispatch_thread->ip_list=ui->IP_list->toPlainText();
+            dispatch_thread->port_list=ui->port_list->toPlainText();
+            dispatch_thread->set_thread_num = ui->threads->value();
+            dispatch_thread->now_thread_num = 0;
+            dispatch_thread->timeout = ui->timeout->value();
+            connect(dispatch_thread,&dispatch::dispatch_finish,[=]{
+                scan_flag=0;
+                keyboard_en(false);
+                ui->pushButton_20->setDisabled(false);
+                ui->stard_scan->setText("start scan");
+                dispatch_thread->quit();
+                //dispatch_thread->wait();
+            });
+            connect(dispatch_thread,&dispatch::return_jindu,this,&Widget::jindu_chuli,Qt::QueuedConnection);
+            connect(dispatch_thread,&dispatch::connect_ok,this,&Widget::output_chuli,Qt::QueuedConnection);
+            ui->progressBar->setValue(0);
+            dispatch_thread->start();
         }else
         {
+            scan_flag=0;
+            keyboard_en(false);
+            ui->pushButton_20->setDisabled(false);
+            ui->stard_scan->setText("start scan");
             dispatch_thread->terminate();
-           emit stop_scan();
-
+            dispatch_thread->quit();
+            //dispatch_thread->wait();
         }
 
         });//'scan button pass'
