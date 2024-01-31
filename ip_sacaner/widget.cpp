@@ -76,8 +76,9 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     ui->outputlist->setReadOnly(true);
-    ui->stard_scan->setText("start scan");
-
+    //ui->stard_scan->setText("start scan");
+    ui->IP_list->setPlaceholderText("例子：\n127.0.0.1 - 单IP\n192.168.0.0/24 - 掩码IP段\n0.0.0.0-255.255.255.255 - IP段\ndomain.com - 单域名");
+    ui->port_list->setPlaceholderText("例子：\n22 - 单端口\n80;443 - 多个不连续端口\n3000-65535 - 连续的端口范围");
 
 
     connect(ui->pushButton_20, &QPushButton::pressed, [=]()
@@ -175,6 +176,21 @@ Widget::Widget(QWidget *parent)
 
      });
 
+    connect(ui->blog_button, &QPushButton::pressed, [=]()
+    {
+        QDesktopServices::openUrl(QUrl(QString("https://wnfed.com/").toLatin1()));
+
+     });
+    connect(ui->github_button, &QPushButton::pressed, [=]()
+    {
+        QDesktopServices::openUrl(QUrl(QString("https://github.com/wuwenfengmi1998/tcp_ip_scan").toLatin1()));
+
+     });
+    connect(ui->gitlab_button, &QPushButton::pressed, [=]()
+    {
+        QDesktopServices::openUrl(QUrl(QString("https://git.lmve.net/kevin/tcp_ip_scan").toLatin1()));
+
+     });
     connect(ui->pushButton_2, &QPushButton::pressed, [=]()
     {
 

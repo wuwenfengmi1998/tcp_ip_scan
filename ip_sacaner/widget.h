@@ -11,6 +11,7 @@
 #include <QThread>
 #include <QFileDialog>
 #include <QDateTime>
+#include <qdesktopservices.h>
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
