@@ -192,6 +192,9 @@ void dispatch::run()
     {
         for(quint64 ii=0;ii<ips_num;ii++)
         {
+
+            qDebug()<<"int: "<<ii<<" now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
+
             trytry_ping=new trytryping;
             trytry_ping->timeout=this->timeout;
             trytry_ping->ipstr=str_ips_list.at(ii);
@@ -199,12 +202,14 @@ void dispatch::run()
 
 
             //connect(trytry_ping,&trytryping::try_one,this,&dispatch::f_one);
-            connect(trytry_ping,&trytry::started,[=]{this->now_thread_num+=1;});
-            connect(trytry_ping,&trytry::finished,[=]{this->now_thread_num-=1;});
+            //connect(trytry_ping,&trytry::started,this,&dispatch::xiancheng_jia,Qt::QueuedConnection);
+            connect(trytry_ping,&trytry::finished,this,&dispatch::xiancheng_jian,Qt::QueuedConnection);
             connect(trytry_ping,&trytryping::connect_ok,[=](QString temp){emit connect_ok(temp);});
             trytry_ping->start();
 
             jindu=(quint64)(((qreal)(ii)/(qreal)(ips_num))*100);
+            jindu+=1;
+            if(jindu>100){jindu=100;}
             if(jindu!=jindu_old)
             {
                 jindu_old=jindu;
@@ -214,7 +219,8 @@ void dispatch::run()
             }
 
 
-            while(this->now_thread_num>this->set_thread_num);
+            this->now_thread_num+=1;
+            while(this->now_thread_num>=this->set_thread_num);
         }
     }else
     {
@@ -279,7 +285,7 @@ void dispatch::run()
 
                 //qDebug() <<str_ips_list.at(ii)<<":"<< ports_list.at(iii);
 
-                //qDebug()<<"now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
+                qDebug()<<"int: "<<now_scan<<" now:"<<this->now_thread_num<<" - set:"<<this->set_thread_num;
 
 
                 connecttry=new trytry;
@@ -289,12 +295,14 @@ void dispatch::run()
 
 
                 //connect(connecttry,&trytry::try_one,this,&dispatch::f_one);
-                connect(connecttry,&trytry::started,[=]{this->now_thread_num+=1;});
-                connect(connecttry,&trytry::finished,[=]{this->now_thread_num-=1;});
+                //connect(connecttry,&trytry::started,this,&dispatch::xiancheng_jia,Qt::QueuedConnection);
+                connect(connecttry,&trytry::finished,this,&dispatch::xiancheng_jian,Qt::QueuedConnection);
                 connect(connecttry,&trytry::connect_ok,[=](QString temp){emit connect_ok(temp);});
                 connecttry->start();
 
                 jindu=(quint64)(((qreal)(now_scan)/(qreal)(scantimes))*100);
+                jindu+=1;
+                if(jindu>100){jindu=100;}
                 if(jindu!=jindu_old)
                 {
                     jindu_old=jindu;
@@ -305,7 +313,8 @@ void dispatch::run()
 
                 now_scan+=1;
 
-                while(this->now_thread_num>this->set_thread_num);
+                this->now_thread_num+=1;
+                while(this->now_thread_num>=this->set_thread_num);
 
             }
 
@@ -323,6 +332,18 @@ void dispatch::run()
 
 void dispatch::f_one(qint16 temp)
 {
-    //this->now_thread_num+=temp;
+    this->now_thread_num+=temp;
+
+}
+
+void dispatch::xiancheng_jia()
+{
+    this->now_thread_num+=1;
+
+}
+
+void dispatch::xiancheng_jian()
+{
+    this->now_thread_num-=1;
 
 }

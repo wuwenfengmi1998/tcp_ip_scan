@@ -12,6 +12,7 @@
 #include <qmath.h>
 #include <QFloat16>
 #include <QtCore/QProcess>
+#include <QMutex>
 class trytryping : public QThread
 {
     Q_OBJECT
@@ -65,11 +66,19 @@ public:
     bool pingonly=false;
     void run();
     void f_one(qint16 temp);
+    void xiancheng_jia();
+    void xiancheng_jian();
+
 signals:
     void dispatch_finish();
     void dispatch_one();
     void return_jindu(quint16);
     void connect_ok(QString);
+
+private:
+
+    QMutex pauseLock;
+
 };
 
 
