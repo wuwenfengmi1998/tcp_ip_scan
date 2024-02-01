@@ -47,7 +47,7 @@ windeployqt ip_sacaner.exe
 
 ## License 授权协议
 
-这个项目 MIT 协议， 请点击 [LICENSE.md](LICENSE.md) 了解更多细节。
+这个项目 GNU 协议， 请点击 [LICENSE.md](LICENSE.md) 了解更多细节。
 
 
 
