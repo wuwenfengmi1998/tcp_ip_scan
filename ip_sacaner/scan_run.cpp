@@ -30,11 +30,11 @@ bool Ping(QString strPingIP,qint16 timeout)
 {
     QProcess pingProcess;
     QString strArg = "ping " + strPingIP + " -n 2 -w "+QString("%1").arg(timeout);// + " -n 1 -i 2";
-    qDebug()<<strArg;
+    //qDebug()<<strArg;
     pingProcess.start(strArg, QIODevice::ReadOnly);
     pingProcess.waitForFinished(-1);
     QString p_stdout = QString::fromLocal8Bit(pingProcess.readAllStandardOutput());
-    qDebug()<<p_stdout;
+    //qDebug()<<p_stdout;
     return p_stdout.contains("TTL=");
 }
 
