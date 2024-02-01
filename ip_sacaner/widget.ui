@@ -47,7 +47,7 @@
    <property name="geometry">
     <rect>
      <x>690</x>
-     <y>150</y>
+     <y>160</y>
      <width>91</width>
      <height>41</height>
     </rect>
@@ -574,9 +574,9 @@
    <property name="geometry">
     <rect>
      <x>400</x>
-     <y>160</y>
+     <y>172</y>
      <width>191</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="value">
@@ -743,7 +743,7 @@
    <property name="geometry">
     <rect>
      <x>600</x>
-     <y>150</y>
+     <y>160</y>
      <width>91</width>
      <height>41</height>
     </rect>
@@ -788,7 +788,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>V1.5</string>
+    <string>V1.5.1</string>
    </property>
   </widget>
   <widget class="QPushButton" name="github_button">
