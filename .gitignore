@@ -1,4 +1,61 @@
-build*
-debug
-.vs
-**/*.user
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Qt
+*.pro.user*
+.qtcreator/
+build/
+
+# Qt generated
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# Build artifacts
+*.o
+*.obj
+*.app
+*.dylib
+*.dll
+*.so
+*.a
+*.lib
+*.exe
+*.dSYM/
+*.out
+
+# IDE
+.vscode/
+.idea/
+.vs/
+*.swp
+*.swo
+*~
+
+# Debug
+debug/
+release/
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lai
+*.la
+
+# Fortran module files
+*.mod
+*.smod
+
+Makefile

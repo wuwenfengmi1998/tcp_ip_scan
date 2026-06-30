@@ -11,11 +11,13 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     scan_run.cpp \
-    widget.cpp
+    widget.cpp \
+    icmp.cpp
 
 HEADERS += \
     scan_run.h \
-    widget.h
+    widget.h \
+    icmp.h
 
 FORMS += \
     widget.ui

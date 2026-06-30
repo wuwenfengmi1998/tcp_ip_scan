@@ -11,7 +11,7 @@
 #include <QPlainTextEdit>
 #include <qmath.h>
 #include <QFloat16>
-#include <QtCore/QProcess>
+#include "icmp.h"
 #include <QMutex>
 class trytryping : public QThread
 {

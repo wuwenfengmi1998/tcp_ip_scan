@@ -169,7 +169,7 @@ Widget::Widget(QWidget *parent)
             QFile file(fileName);
             if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
                 QTextStream out(&file);
-                out << ui->outputlist->toPlainText() << endl;
+                out << ui->outputlist->toPlainText() << Qt::endl;
                 file.close();
             }
         }

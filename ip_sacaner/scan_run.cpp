@@ -1,4 +1,5 @@
 #include "scan_run.h"
+#include <QRegularExpression>
 
 
 QString ipv4int_to_str(quint32 ipint)
@@ -26,19 +27,6 @@ quint32 ipv4str_to_int(const QString& ipstr)
     }
 }
 
-bool Ping(QString strPingIP,qint16 timeout)
-{
-    QProcess pingProcess;
-    QString strArg = "ping " + strPingIP + " -n 2 -w "+QString("%1").arg(timeout);// + " -n 1 -i 2";
-    //qDebug()<<strArg;
-    pingProcess.start(strArg, QIODevice::ReadOnly);
-    pingProcess.waitForFinished(-1);
-    QString p_stdout = QString::fromLocal8Bit(pingProcess.readAllStandardOutput());
-    //qDebug()<<p_stdout;
-    return p_stdout.contains("TTL=");
-}
-
-
 trytryping::trytryping()
 {
 
@@ -46,17 +34,17 @@ trytryping::trytryping()
 
 void trytryping::run()
 {
-    //emit try_one(1);
+    QString ip = this->ipstr;
 
-    QString ip=this->ipstr;
-
-    if(Ping(ip,this->timeout))
+    IcmpPing pinger;
+    if (pinger.open())
     {
-        emit connect_ok(ip);
+        if (pinger.ping(ip.toUtf8().constData(), this->timeout))
+        {
+            emit connect_ok(ip);
+        }
+        pinger.close();
     }
-
-
-    //emit try_one(-1);
 }
 
 
@@ -116,21 +104,21 @@ void dispatch::run()
     QList <quint32> ports_list;
     quint64 ports_num=0;
     quint64 ips_num=0;
-    QRegExp ex_ipv4     ("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
-    QRegExp ex_ipv4_more("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)-((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
-    QRegExp ex_ipv4_more2("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)/(0?[0-9]|1[0-9]|2[0-9]|3[0-2])$");
-    QRegExp ex_ipv6     ("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
-    QRegExp ex_domain   ("^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}$");
+    QRegularExpression ex_ipv4     ("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
+    QRegularExpression ex_ipv4_more("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)-((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
+    QRegularExpression ex_ipv4_more2("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)/(0?[0-9]|1[0-9]|2[0-9]|3[0-2])$");
+    QRegularExpression ex_ipv6     ("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
+    QRegularExpression ex_domain   ("^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}$");
 
 
     for (int i = 0; i < str_ip_list.size(); ++i)
     {
-        if(ex_ipv4.exactMatch(str_ip_list.at(i)))
+        if(ex_ipv4.match(str_ip_list.at(i)).hasMatch())
         {
             qDebug() << str_ip_list.at(i)<<" is ipv4";
             str_ips_list.append(str_ip_list.at(i));
             ips_num+=1;
-        }else if(ex_ipv4_more.exactMatch(str_ip_list.at(i)))
+        }else if(ex_ipv4_more.match(str_ip_list.at(i)).hasMatch())
         {
             qDebug() << str_ip_list.at(i)<<" is ipv4_more";
             str_list_more=str_ip_list.at(i).split("-");
@@ -156,7 +144,7 @@ void dispatch::run()
                ips_num+=1;
            }
 
-        }else if(ex_ipv4_more2.exactMatch(str_ip_list.at(i)))
+        }else if(ex_ipv4_more2.match(str_ip_list.at(i)).hasMatch())
         {
 
             qDebug() << str_ip_list.at(i)<<" is ipv4_more2";
@@ -169,13 +157,13 @@ void dispatch::run()
                ips_num+=1;
            }
 
-        }else if(ex_ipv6.exactMatch(str_ip_list.at(i)))
+        }else if(ex_ipv6.match(str_ip_list.at(i)).hasMatch())
         {
 
             qDebug() << str_ip_list.at(i)<<" is ipv6";
             str_ips_list.append(str_ip_list.at(i));
             ips_num+=1;
-        }else if(ex_domain.exactMatch(str_ip_list.at(i)))
+        }else if(ex_domain.match(str_ip_list.at(i)).hasMatch())
         {
 
             qDebug() << str_ip_list.at(i)<<" is domain";
@@ -226,21 +214,21 @@ void dispatch::run()
         }
     }else
     {
-        QRegExp ex_port      ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
-        QRegExp ex_porttoport("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])-(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
-        //QRegExp ex_portmore  ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]);$");
+        QRegularExpression ex_port      ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
+        QRegularExpression ex_porttoport("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])-(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
+        //QRegularExpression ex_portmore  ("^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]);$");
         for (int i = 0; i < str_port_list.size(); ++i)
         {
             str_ports_temp=str_port_list.at(i).split(";");
             for (int ii = 0; ii < str_ports_temp.size(); ++ii)
             {
-                if(ex_port.exactMatch(str_ports_temp.at(ii)))
+                if(ex_port.match(str_ports_temp.at(ii)).hasMatch())
                 {
                     qDebug()<<str_ports_temp.at(ii)<<" norlmore port";
                     ports_list.append(str_ports_temp.at(ii).toInt());
                     ports_num+=1;
 
-                }else if(ex_porttoport.exactMatch(str_ports_temp.at(ii)))
+                }else if(ex_porttoport.match(str_ports_temp.at(ii)).hasMatch())
                 {
                     qDebug()<<str_ports_temp.at(ii)<<" port to port";
                     str_porttoport_temp=str_ports_temp.at(ii).split("-");
